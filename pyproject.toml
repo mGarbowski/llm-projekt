@@ -4,4 +4,19 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "markupsafe==2.1.3",
+    "sentence-transformers>=5.1.2",
+    "torch==2.7.1+cu118",
+]
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "notebook>=7.1.3",
+]
+
+[[tool.uv.index]]
+# This is for ensuring a torch version that is compatible with my NVIDIA GeForce GTX 1060 6GB GPU
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu118"
