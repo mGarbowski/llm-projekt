@@ -24,3 +24,5 @@ Aby ocenić jakiś wygnerowanych odpowiedzi nalezy przygotować zbiór zawieraj�
 
 Do ewaluacji rozwiązania RAG można wykrozystać bibliotekę ragas https://github.com/explodinggradients/ragas. Liczy wiele popularnych metryk - po Pana stronie pozostałoby przygotowanie odpowiedniego zbioru testowego. Jak pisałem wcześniej, może to być relatywnie mały zbiór.
 
+## Źródła
+* https://medium.com/@jesvinkjustin/from-zero-to-rag-the-art-of-document-chunking-and-embedding-for-rag-d9764695cc46
