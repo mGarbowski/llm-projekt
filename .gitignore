@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
-## IDE config
+# IDE config
 .idea
 .vscode
+
+# Data
+data/
