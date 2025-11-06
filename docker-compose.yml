@@ -5,7 +5,7 @@ services:
     image: chromadb/chroma:latest
     container_name: llm_projekt_chromadb
     ports:
-      - "8000:8000"
+      - "9000:8000"
     volumes:
         - chromadb_data:/data
     deploy:
