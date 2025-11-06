@@ -3,6 +3,7 @@
 import argparse
 import re
 import json
+import uuid
 from pathlib import Path
 from dataclasses import dataclass, asdict
 from langchain_text_splitters import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
@@ -18,6 +19,7 @@ class Config:
 
 @dataclass(frozen=True)
 class DocumentChunk:
+    id: str
     content: str
     filename: str
     course: str
@@ -43,6 +45,9 @@ class DocumentChunker:
             chunk_size=self.config.chunk_size,
             chunk_overlap=self.config.chunk_overlap,
         )
+
+    def generate_id(self) -> str:
+        return str(uuid.uuid4())
 
     def extract_title(self, content: str) -> str | None:
         """Extract from first H1 header or fallback to first line."""
@@ -71,6 +76,7 @@ class DocumentChunker:
         print(f"Generated {len(text_splits)} chunks for document: {filename}")
         return [
             DocumentChunk(
+                id=self.generate_id(),
                 content=chunk.page_content,
                 filename=filename,
                 course=course,
@@ -118,15 +124,15 @@ def main():
     parser.add_argument(
         "--chunk_size",
         type=int,
-        default=1000,
-        help="Size of each text chunk (default: 1000 characters)"
+        default=250,
+        help="Size of each text chunk (default: 250 characters)"
     )
 
     parser.add_argument(
         "--chunk_overlap",
         type=int,
-        default=200,
-        help="Overlap between text chunks (default: 200 characters)"
+        default=20,
+        help="Overlap between text chunks (default: 20 characters)"
     )
 
     args = parser.parse_args()
