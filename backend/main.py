@@ -3,6 +3,7 @@ from typing import Any
 import chromadb
 from fastapi import FastAPI, Body
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from transformers import pipeline
 import torch
 
@@ -19,6 +20,17 @@ chroma_client = chromadb.HttpClient(
 docs = chroma_client.get_collection(name="chunked_notes")
 
 app = FastAPI()
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+    allow_credentials=False,
+)
 
 def retrieve(question: str, top_k: int = 4) -> list[dict[str, Any]]:
     res = docs.query(query_texts=[question], n_results=top_k)
