@@ -24,23 +24,14 @@ class DocumentChunk:
     filename: str
     course: str
     title: str
-    other_metadata: dict[str, str]
+    number: int
+
 
 
 class DocumentChunker:
     def __init__(self, config: Config):
         self.config = config
-        self.markdown_split_headers = [
-            ("#", "H1"),
-            ("##", "H2"),
-            ("###", "H3"),
-            ("####", "H4"),
-        ]
 
-        self.md_splitter = MarkdownHeaderTextSplitter(
-            self.markdown_split_headers,
-            strip_headers=False,
-        )
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.config.chunk_size,
             chunk_overlap=self.config.chunk_overlap,
@@ -71,19 +62,18 @@ class DocumentChunker:
         course = doc_path.parent.name
         title = self.extract_title(content) or filename
 
-        md_splits = self.md_splitter.split_text(content)
-        text_splits = self.text_splitter.split_documents(md_splits)
+        text_splits = self.text_splitter.split_text(content)
         print(f"Generated {len(text_splits)} chunks for document: {filename}")
         return [
             DocumentChunk(
                 id=self.generate_id(),
-                content=chunk.page_content,
+                content=chunk,
                 filename=filename,
                 course=course,
                 title=title,
-                other_metadata=chunk.metadata
+                number=idx,
             )
-            for chunk in text_splits
+            for idx, chunk in enumerate(text_splits)
         ]
 
     def process_course_dir(self, course_dir: Path) -> list[DocumentChunk]:
@@ -111,6 +101,8 @@ def main():
     parser.add_argument(
         "input",
         type=str,
+        nargs="?",
+        default="data/raw/notes",
         help="Input directory containing notes to be chunked"
     )
 
@@ -124,7 +116,7 @@ def main():
     parser.add_argument(
         "--chunk_size",
         type=int,
-        default=250,
+        default=700,
         help="Size of each text chunk (default: 250 characters)"
     )
 
