@@ -6,7 +6,10 @@ import json
 import uuid
 from pathlib import Path
 from dataclasses import dataclass, asdict
-from langchain_text_splitters import RecursiveCharacterTextSplitter, MarkdownHeaderTextSplitter
+from langchain_text_splitters import (
+    RecursiveCharacterTextSplitter,
+    MarkdownHeaderTextSplitter,
+)
 
 
 @dataclass(frozen=True)
@@ -25,7 +28,6 @@ class DocumentChunk:
     course: str
     title: str
     number: int
-
 
 
 class DocumentChunker:
@@ -103,28 +105,29 @@ def main():
         type=str,
         nargs="?",
         default="data/raw/notes",
-        help="Input directory containing notes to be chunked"
+        help="Input directory containing notes to be chunked",
     )
 
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=str,
         default="data/processed/chunked_notes",
-        help="Output directory for chunked notes (default: data/processed/chunked_notes)"
+        help="Output directory for chunked notes (default: data/processed/chunked_notes)",
     )
 
     parser.add_argument(
         "--chunk_size",
         type=int,
         default=700,
-        help="Size of each text chunk (default: 250 characters)"
+        help="Size of each text chunk (default: 250 characters)",
     )
 
     parser.add_argument(
         "--chunk_overlap",
         type=int,
         default=20,
-        help="Overlap between text chunks (default: 20 characters)"
+        help="Overlap between text chunks (default: 20 characters)",
     )
 
     args = parser.parse_args()
@@ -132,7 +135,7 @@ def main():
         input_dir=Path(args.input),
         output_dir=Path(args.output),
         chunk_size=args.chunk_size,
-        chunk_overlap=args.chunk_overlap
+        chunk_overlap=args.chunk_overlap,
     )
 
     chunker = DocumentChunker(config)
@@ -140,7 +143,9 @@ def main():
     config.output_dir.mkdir(parents=True, exist_ok=True)
     output_path = config.output_dir / "chunked_notes.json"
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump([asdict(chunk) for chunk in all_chunks], f, ensure_ascii=False, indent=2)
+        json.dump(
+            [asdict(chunk) for chunk in all_chunks], f, ensure_ascii=False, indent=2
+        )
     print(f"Chunked {len(all_chunks)} document chunks saved to {output_path}")
 
 

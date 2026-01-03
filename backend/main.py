@@ -32,22 +32,30 @@ app.add_middleware(
     allow_credentials=False,
 )
 
+
 def retrieve(question: str, top_k: int = 4) -> list[dict[str, Any]]:
     res = docs.query(query_texts=[question], n_results=top_k)
     out: list[dict[str, Any]] = []
     n = len(res.get("documents", [[]])[0]) if res.get("documents") else 0
     for i in range(n):
-        out.append({
-            "id": res["ids"][0][i] if "ids" in res else None,
-            "text": res["documents"][0][i],
-            "metadata": res["metadatas"][0][i] if "metadatas" in res else {},
-            "score": res["distances"][0][i] if "distances" in res else None,
-        })
+        out.append(
+            {
+                "id": res["ids"][0][i] if "ids" in res else None,
+                "text": res["documents"][0][i],
+                "metadata": res["metadatas"][0][i] if "metadatas" in res else {},
+                "score": res["distances"][0][i] if "distances" in res else None,
+            }
+        )
     return out
+
 
 def build_prompt(question: str, ctx_docs: list[dict[str, Any]]) -> str:
     tokenizer = gen.tokenizer
-    ctx_text = "\n\n".join([f"[{i+1}] {d['text']}" for i, d in enumerate(ctx_docs)]) if ctx_docs else ""
+    ctx_text = (
+        "\n\n".join([f"[{i + 1}] {d['text']}" for i, d in enumerate(ctx_docs)])
+        if ctx_docs
+        else ""
+    )
     system = "Jesteś pomocnym asystentem, odpowiadaj krótko po polsku na podstawie kontekstu. Cytuj źródła w nawiasach kwadratowych [...]."
     if ctx_text:
         system += "\nKontekst:\n" + ctx_text
@@ -55,7 +63,10 @@ def build_prompt(question: str, ctx_docs: list[dict[str, Any]]) -> str:
         {"role": "system", "content": system},
         {"role": "user", "content": question},
     ]
-    return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    return tokenizer.apply_chat_template(
+        messages, tokenize=False, add_generation_prompt=True
+    )
+
 
 @app.post("/completion")
 def completion(body: dict[str, Any] = Body(...)):
