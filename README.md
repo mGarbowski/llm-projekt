@@ -57,6 +57,25 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
   * endpoint REST API
 * Aplikacja frontend - prosta aplikacja w React z okienkiem czatu
 
+## Ewaluacja rozwiązania
+* Zbiór testowy
+  * własny przygotowany na podstawie zbioru notatek
+  * ręcznie i posiłkując się LLM do pomocy
+  * format (pytanie, lista istotnych fragmentów (id), wzorcowa odpowiedź)
+  * plik `.jsonl`
+* Ewaluacja komponentu retrieval
+  * porównanie wariantów
+    * BM25
+    * bi-enkoder
+    * BM25 + bi-enkoder + reranker
+  * metryki
+    * Recall@k
+    * MRR (Mean Reciprocal Rank)
+* Ewaluacja jakości generowanych odpowiedzi
+  * metryki
+      * ROGUE
+      * BLUE
+      * BERTScore
 
 ## Źródła
 * https://medium.com/@jesvinkjustin/from-zero-to-rag-the-art-of-document-chunking-and-embedding-for-rag-d9764695cc46
