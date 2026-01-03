@@ -4,3 +4,5 @@ gather-notes SOURCE:
 chunk *ARGS:
     uv run -m scripts.document_chunking {{ARGS}}
 
+fmt:
+    uvx ruff format
