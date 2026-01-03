@@ -33,9 +33,8 @@ Duży model językowy (generator) będzie uruchomiony na GPU, natomiast pozosta�
 
 * Generator - `speakleash/Bielik-1.5B-v3.0-Instruct`
 * Retriever
-  * przetestowane na laboratorium
-  * algorytm BM25
-  * bi-enkoder `sdadas/mmlw-retrieval-roberta-large`
+  * PostgreSQL full-text search (wariant leksykalny)
+  * bi-enkoder `sdadas/mmlw-retrieval-roberta-large` (przetestowany na laboratorium)
 * Reranker
   * przetestowany na laboratorium
   * cross-enkoder `sdadas/polish-reranker-roberta-v3`
@@ -46,12 +45,12 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
 ## Koncepcja implementacji
 * Dokumenty zostaną podzielone na fargmenty (chunki)
   * chunk ma się mieścić w kontekście modeli (przede wszystkim retrievera i rerankera)
-* Dla chunków zostaną wylicozne 2 wektory zanurzeń
-  * jeden klasycznym algorytmem (BM25)
-  * jeden za pomocą bi-enkodera
 * Chunki z zanurzeniami i metadanymi będą zapisane w pazie PostgreSQL z rozszerzeniem pgvector
 * Aplikacja backend FastAPI + SentenceTransformers + transformers
-  * retrieval - 2 zapytania do bazy - najbliższi sąsiedzi wg BM25 i bi-enkodera
+  * retrieval
+    * 2 warianty
+    * leksykalny - full-text search w PostgreSQL
+    * semantyczny - bi-enkoder do wyznaczania wektorów zanurzeń, indeks w pgvector
   * reranking - cross-enkoder na wynikach retrieval
   * generacja odpowiedzi - LLM na podstawie promptu z pytaniem i najistotniejszymi chunkami wg. rerankera
   * endpoint REST API
@@ -65,9 +64,9 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
   * plik `.jsonl`
 * Ewaluacja komponentu retrieval
   * porównanie wariantów
-    * BM25
-    * bi-enkoder
-    * BM25 + bi-enkoder + reranker
+    * semantyczne
+    * leksykalne
+    * semantyczne + leksykalne + reranker
   * metryki
     * Recall@k
     * MRR (Mean Reciprocal Rank)
@@ -86,8 +85,7 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
 * Wyczyszczenie nieużywanych zależności
 * Schemat bazy danych w PostgreSQL
 * Konfiguracja ORMa
-* Skrypt indeksujący dokumenty za pomocą BM25 i bi-enkodera
-* Skrypt zasilający bazę dokumentami
+* Skrypt zasilający bazę dokumentami i tworzący indeks
 * Implementacja aplikacji
   * integracja z bazą danych
   * moduł retriever
