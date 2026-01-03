@@ -80,3 +80,19 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
 ## Źródła
 * https://medium.com/@jesvinkjustin/from-zero-to-rag-the-art-of-document-chunking-and-embedding-for-rag-d9764695cc46
 * https://medium.com/@nitinprodduturi/using-postgresql-as-a-vector-database-for-rag-retrieval-augmented-generation-c62cfebd9560
+
+## TODO
+* Przygotowanie zbioru testowego
+* Wyczyszczenie nieużywanych zależności
+* Schemat bazy danych w PostgreSQL
+* Konfiguracja ORMa
+* Skrypt indeksujący dokumenty za pomocą BM25 i bi-enkodera
+* Skrypt zasilający bazę dokumentami
+* Implementacja aplikacji
+  * integracja z bazą danych
+  * moduł retriever
+  * moduł reranker
+  * moduł generator
+  * frontend
+* Ewaluacja
+  * ...
