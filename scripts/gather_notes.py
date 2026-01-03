@@ -29,13 +29,15 @@ def process_course_dir(course_dir: Path, output_dir: Path):
     if not notes_dir.is_dir():
         return
 
+    items_to_copy = [item for item in notes_dir.iterdir() if item.is_file() and item.suffix == ".md"]
+    if not items_to_copy:
+        return
+
     course_name = course_dir.name
     target_dir = output_dir / course_name
     target_dir.mkdir(parents=True, exist_ok=True)
-
-    for item in notes_dir.iterdir():
-        if item.is_file():
-            shutil.copy2(item, target_dir / item.name)
+    for item in items_to_copy:
+        shutil.copy2(item, target_dir / item.name)
 
 
 def main():
