@@ -10,5 +10,11 @@ index *ARGS:
 seed *ARGS:
     uv run -m notes_rag.scripts.seed {{ARGS}}
 
+drop_db:
+    docker compose down -v
+
+create_db:
+    docker compose up -d
+
 fmt:
     uvx ruff format
