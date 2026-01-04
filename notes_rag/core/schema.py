@@ -35,11 +35,21 @@ class NoteChunkRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def search_fulltext(self, query: str):  # TODO sorting, limit
-        stmt = select(NoteChunk).where(
-            func.to_tsvector("simple", NoteChunk.content).op("@@")(
-                func.phraseto_tsquery("simple", query)
+    def search_fulltext(self, query: str, limit: int = 10):
+        stmt = (
+            select(NoteChunk)
+            .where(
+                func.to_tsvector("simple", NoteChunk.content).op("@@")(
+                    func.phraseto_tsquery("simple", query)
+                )
             )
+            .order_by(
+                func.ts_rank(
+                    func.to_tsvector("simple", NoteChunk.content),
+                    func.phraseto_tsquery("simple", query),
+                ).desc()
+            )
+            .limit(limit)
         )
         return self.session.execute(stmt).scalars().all()
 
