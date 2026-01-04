@@ -13,7 +13,8 @@ from sqlalchemy import (
     text,
     select,
 )
-from sqlalchemy.orm import declarative_base, Session, sessionmaker
+from sqlalchemy.orm import declarative_base, Session, sessionmaker, mapped_column
+from pgvector.sqlalchemy import Vector
 
 Base = declarative_base()
 
@@ -26,6 +27,7 @@ class NoteChunk(Base):
     filename = Column(Text)
     title = Column(Text)
     number = Column(Integer)
+    embedding = mapped_column(Vector(768))
 
     def __str__(self):
         return f"NoteChunk(id={self.id}, title={self.title}, course={self.course}, number={self.number})"
