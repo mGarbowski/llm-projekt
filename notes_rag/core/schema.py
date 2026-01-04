@@ -55,6 +55,14 @@ class NoteChunkRepository:
         )
         return self.session.execute(stmt).scalars().all()
 
+    def search_semantic(self, query_embedding: list[float], limit: int = 10):
+        stmt = (
+            select(NoteChunk)
+            .order_by(NoteChunk.embedding.l2_distance(query_embedding))
+            .limit(limit)
+        )
+        return self.session.execute(stmt).scalars().all()
+
 
 def create_fulltext_index(engine: Engine):
     sql = (
