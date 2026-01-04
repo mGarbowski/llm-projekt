@@ -1,7 +1,7 @@
 """Calculate embeddings for processed note chunks
 
-Calculates BM25 and sdadas/mmlw-retrieval-roberta-large embeddings
-Stores them separately in JSON files
+Calculates mmlw-retrieval-roberta-large embeddings
+Stores them in a JSON file
 """
 
 import argparse
@@ -11,36 +11,14 @@ from pathlib import Path
 
 from dataclasses import dataclass
 
-from rank_bm25 import BM25Okapi
-from stop_words import get_stop_words
+from sentence_transformers import SentenceTransformer
+from tqdm import tqdm
 
 
 @dataclass(frozen=True)
 class Config:
     chunks_file: Path
     output_dir: Path
-
-
-class BM25Retriever:
-    def __init__(self):
-        self._stop_words = get_stop_words("polish")
-
-    def tokenize(self, text: str) -> list[str]:
-        tokens = []
-        raw_tokens = text.lower().strip().split()
-        for token in raw_tokens:
-            for punc in string.punctuation:
-                token = token.replace(punc, "")
-            if token in self._stop_words:
-                continue
-            if token == "":
-                continue
-            tokens.append(token)
-        return tokens
-
-    def process_corpus(self, corpus: list[str]) -> None:
-        tokenized_corpus = [self.tokenize(doc) for doc in corpus]
-        bm25 = BM25Okapi(tokenized_corpus)
 
 
 def main():
@@ -65,10 +43,14 @@ def main():
     )
 
     chunks = json.loads(cfg.chunks_file.read_text())
-    print(chunks[0])
-    corpus = [chunk["content"] for chunk in chunks]
-    bm25 = BM25Retriever()
-    bm25.process_corpus(corpus)
+    bi_encoder_model = SentenceTransformer("sdadas/mmlw-retrieval-roberta-base")
+    embeddings_map = {
+        chunk["id"]: bi_encoder_model.encode(chunk["content"]).tolist()
+        for chunk in tqdm(chunks)
+    }
+    cfg.output_dir.mkdir(parents=True, exist_ok=True)
+    embeddings_file = cfg.output_dir / "note_chunk_embeddings.json"
+    embeddings_file.write_text(json.dumps(embeddings_map))
 
 
 if __name__ == "__main__":
