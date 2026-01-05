@@ -8,11 +8,6 @@ type Source = {
   title: string;
   filename?: string | null;
 };
-type ApiResponse = {
-  answer: string;
-  sources: Source[];
-};
-
 const API_BASE: string = "http://localhost:8000";
 
 type ChatMessage = {

@@ -67,6 +67,7 @@ app.add_middleware(
 
 @app.post("/completion")
 def completion(body: dict[str, Any] = Body(...), rag: Pipeline = Depends(get_pipeline)):
+    """Returns a generated answer and the sources used after generation finishes."""
     question = body.get("question")
     if not question:
         return JSONResponse({"error": "Missing field `question`."}, status_code=400)
@@ -86,7 +87,7 @@ def completion(body: dict[str, Any] = Body(...), rag: Pipeline = Depends(get_pip
 
 @app.post("/completion/stream")
 async def completion_stream(body: dict[str, Any] = Body(...), pipeline: Pipeline = Depends(get_pipeline)):
-    """
+    """Streaming answer for a chatbot-style interface.
     Streams tokens as SSE events:
       - event 'message' (default) with `data: "<token text>"`
       - event 'done' with `data: { "sources": [...] }` when generation finishes
