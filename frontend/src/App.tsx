@@ -2,10 +2,11 @@ import React, { useCallback, useMemo, useState } from "react";
 
 type Role = "user" | "assistant";
 type Source = {
-  id?: string | null;
-  text: string;
-  metadata?: Record<string, any>;
-  score?: number | null;
+  id: string;
+  content: string;
+  course: string;
+  title: string;
+  filename: string;
 };
 type ApiResponse = {
   answer: string;
@@ -126,10 +127,10 @@ export const App: React.FC = () => {
                   {m.sources.map((s, i) => (
                     <li key={s.id ?? i} style={{ fontSize: 13 }}>
                       <span style={{ color: "#333" }}>
-                        [{i + 1}] {s.metadata?.title ?? s.id ?? "source"}
+                        [{i + 1}] {s.title ?? s.id ?? "source"}
                       </span>
                       <div style={{ color: "#666" }}>
-                        {s.text.length > 220 ? `${s.text.slice(0, 220)}…` : s.text}
+                        {s.content.length > 220 ? `${s.content.slice(0, 220)}…` : s.content}
                       </div>
                     </li>
                   ))}
