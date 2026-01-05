@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 import torch
 from transformers import Pipeline, pipeline, TextIteratorStreamer
 
+from notes_rag.core.models import load_generator_model
 from notes_rag.core.schema import NoteChunk
 
 DEFAULT_SYSTEM_PROMPT = "Jesteś pomocnym asystentem, odpowiadaj krótko po polsku na podstawie kontekstu. Cytuj źródła w nawiasach kwadratowych [...]."
@@ -28,12 +29,7 @@ class Generator:
     @classmethod
     def default(cls, system_prompt: str = DEFAULT_SYSTEM_PROMPT):
         return cls(
-            llm=pipeline(
-                "text-generation",
-                model="speakleash/Bielik-1.5B-v3.0-Instruct",
-                dtype=torch.bfloat16,
-                device_map="auto",
-            ),
+            llm=load_generator_model(),
             system_prompt=system_prompt,
         )
 

@@ -3,6 +3,7 @@ from typing import Protocol
 import torch
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
+from notes_rag.core.models import load_reranker_model, load_bi_encoder_model
 from notes_rag.core.schema import NoteChunk, NoteChunkRepository
 
 
@@ -33,7 +34,7 @@ class SemanticRetriever:
     def default_model(
         cls, notes_repository: NoteChunkRepository, query_prefix: str = "Zapytanie: "
     ):
-        model = SentenceTransformer("sdadas/mmlw-retrieval-roberta-base")
+        model = load_bi_encoder_model()
         return cls(notes_repository, model, query_prefix)
 
     def compute_embedding(self, text: str) -> list[float]:
@@ -51,14 +52,7 @@ class Reranker:
 
     @classmethod
     def with_default_model(cls):
-        model = CrossEncoder(
-            "sdadas/polish-reranker-roberta-v3",
-            default_activation_function=torch.nn.Identity(),
-            max_length=8192,
-            trust_remote_code=True,
-            model_kwargs={"torch_dtype": torch.bfloat16},
-        )
-        return cls(model)
+        return cls(load_reranker_model())
 
     def rerank(self, query: str, candidates: list[NoteChunk]) -> list[NoteChunk]:
         """Return the list of candidates sorted by relevance to the query."""
