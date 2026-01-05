@@ -42,13 +42,13 @@ class NoteChunkRepository:
             select(NoteChunk)
             .where(
                 func.to_tsvector("simple", NoteChunk.content).op("@@")(
-                    func.phraseto_tsquery("simple", query)
+                    func.websearch_to_tsquery("simple", query)
                 )
             )
             .order_by(
                 func.ts_rank(
                     func.to_tsvector("simple", NoteChunk.content),
-                    func.phraseto_tsquery("simple", query),
+                    func.websearch_to_tsquery("simple", query),
                 ).desc()
             )
             .limit(limit)
