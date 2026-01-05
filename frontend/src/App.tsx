@@ -1,4 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
+import Markdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 type Role = "user" | "assistant";
 type Source = {
@@ -174,7 +177,7 @@ export const App: React.FC = () => {
           <div key={idx} style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 12, color: "#666", marginBottom: 4 }}>{m.role === "user" ? "You" : "Assistant"}</div>
             <div style={{ whiteSpace: "pre-wrap", background: m.role === "user" ? "#e9f2ff" : "#fff", border: "1px solid #e5e5e5", borderRadius: 6, padding: 10 }}>
-              {m.content}
+              <Markdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{m.content}</Markdown>
             </div>
             {m.role === "assistant" && m.sources && m.sources.length > 0 && (
               <div style={{ marginTop: 6 }}>
@@ -183,7 +186,7 @@ export const App: React.FC = () => {
                   {m.sources.map((s, i) => (
                     <li key={s.id ?? i} style={{ fontSize: 13 }}>
                       <span style={{ color: "#333" }}>[{i + 1}] {s.title ?? s.id ?? "source"}</span>
-                      <div style={{ color: "#666" }}>{s.content.length > 220 ? `${s.content.slice(0, 220)}…` : s.content}</div>
+                      <div style={{ color: "#666" }}><Markdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{s.content.length > 220 ? `${s.content.slice(0, 220)}…` : s.content}</Markdown></div>
                     </li>
                   ))}
                 </ul>
