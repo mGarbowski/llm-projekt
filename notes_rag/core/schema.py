@@ -70,7 +70,7 @@ class NoteChunkRepository:
 
     def _make_or_ts_query(self, query: str):
         """Text search query with alternative of the tokens"""
-        tokens = re.findall(r'\w+', query.lower())
+        tokens = re.findall(r"\w+", query.lower())
         ts_query_text = " | ".join(tokens)
         return func.to_tsquery(self.text_search_config, ts_query_text)
 

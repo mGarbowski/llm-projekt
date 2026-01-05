@@ -19,13 +19,20 @@ class FulltextRetriever:
 
 
 class SemanticRetriever:
-    def __init__(self, notes_repository: NoteChunkRepository, model, query_prefix: str = "Zapytanie: "):
+    def __init__(
+        self,
+        notes_repository: NoteChunkRepository,
+        model,
+        query_prefix: str = "Zapytanie: ",
+    ):
         self.notes_repository = notes_repository
         self.model = model
         self.query_prefix = query_prefix
 
     @classmethod
-    def default_model(cls, notes_repository: NoteChunkRepository, query_prefix: str = "Zapytanie: "):
+    def default_model(
+        cls, notes_repository: NoteChunkRepository, query_prefix: str = "Zapytanie: "
+    ):
         model = SentenceTransformer("sdadas/mmlw-retrieval-roberta-base")
         return cls(notes_repository, model, query_prefix)
 
@@ -49,7 +56,7 @@ class Reranker:
             default_activation_function=torch.nn.Identity(),
             max_length=8192,
             trust_remote_code=True,
-            model_kwargs={"torch_dtype": torch.bfloat16}
+            model_kwargs={"torch_dtype": torch.bfloat16},
         )
         return cls(model)
 
