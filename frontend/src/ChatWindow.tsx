@@ -1,5 +1,3 @@
-// `frontend/src/components/ChatWindow.tsx`
-
 import { Box, Divider, Typography } from "@mui/material";
 import type React from "react";
 import { useEffect, useRef } from "react";
@@ -7,8 +5,8 @@ import type { ChatMessage } from "./api";
 import { MessageBubble } from "./MessageBubble";
 
 type Props = {
-    history: ChatMessage[]; // finished messages
-    current?: { content: string; sources?: any[] } | null; // generating assistant message
+    history: ChatMessage[];
+    current?: { content: string; sources?: any[] } | null;
     loading: boolean;
     error?: string | null;
     height?: number;
@@ -23,12 +21,13 @@ export const ChatWindow: React.FC<Props> = ({
 }) => {
     const scrollerRef = useRef<HTMLDivElement | null>(null);
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <scroll when content changes>
     useEffect(() => {
         scrollerRef.current?.scrollTo({
             top: scrollerRef.current.scrollHeight,
             behavior: "smooth",
         });
-    }, [history.length, current?.content, loading]);
+    }, [current]);
 
     return (
         <Box
@@ -49,8 +48,9 @@ export const ChatWindow: React.FC<Props> = ({
             )}
             {history.map((m, i) => (
                 <MessageBubble
+                    // biome-ignore lint/suspicious/noArrayIndexKey: <no suitable identifier>
                     key={i}
-                    role={m.role}
+                    chatRole={m.role}
                     content={m.content}
                     sources={m.sources}
                 />
@@ -58,7 +58,7 @@ export const ChatWindow: React.FC<Props> = ({
 
             {current && (
                 <MessageBubble
-                    role="assistant"
+                    chatRole="assistant"
                     content={current.content}
                     sources={current.sources}
                 />
