@@ -1,3 +1,4 @@
+import re
 import uuid
 from dataclasses import dataclass
 from typing import Generator, Any, Callable
@@ -34,21 +35,22 @@ class NoteChunk(Base):
 
 
 class NoteChunkRepository:
-    def __init__(self, session: Session):
+    def __init__(self, session: Session, text_search_config: str = "simple"):
         self.session = session
+        self.text_search_config = text_search_config
 
     def search_fulltext(self, query: str, limit: int = 10):
         stmt = (
             select(NoteChunk)
             .where(
-                func.to_tsvector("simple", NoteChunk.content).op("@@")(
-                    func.websearch_to_tsquery("simple", query)
+                self._make_ts_vector(NoteChunk.content).op("@@")(
+                    self._make_or_ts_query(query)
                 )
             )
             .order_by(
                 func.ts_rank(
-                    func.to_tsvector("simple", NoteChunk.content),
-                    func.websearch_to_tsquery("simple", query),
+                    self._make_ts_vector(NoteChunk.content),
+                    self._make_or_ts_query(query),
                 ).desc()
             )
             .limit(limit)
@@ -62,6 +64,21 @@ class NoteChunkRepository:
             .limit(limit)
         )
         return self.session.execute(stmt).scalars().all()
+
+    def _make_ts_vector(self, document):
+        return func.to_tsvector(self.text_search_config, document)
+
+    def _make_or_ts_query(self, query: str):
+        """Text search query with alternative of the tokens"""
+        tokens = re.findall(r'\w+', query.lower())
+        ts_query_text = " | ".join(tokens)
+        return func.to_tsquery(self.text_search_config, ts_query_text)
+
+    def _make_websearch_ts_query(self, query: str):
+        """Text search query in websearch format
+        https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-PARSING-QUERIES
+        """
+        return func.websearch_to_tsquery(self.text_search_config, query)
 
 
 def create_fulltext_index(engine: Engine):
