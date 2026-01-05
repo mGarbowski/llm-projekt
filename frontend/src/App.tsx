@@ -89,7 +89,7 @@ export const App: React.FC = () => {
     }, [input, loading, sendQuestion]);
 
     const onKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        (e: React.KeyboardEvent<HTMLDivElement>) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 onSend();

@@ -6,6 +6,7 @@ import { MessageBubble } from "./MessageBubble";
 
 type Props = {
     history: ChatMessage[];
+    // biome-ignore lint/suspicious/noExplicitAny: <TODO specify request and response types>
     current?: { content: string; sources?: any[] } | null;
     loading: boolean;
     error?: string | null;

@@ -1,5 +1,3 @@
-// `frontend/src/components/InputBar.tsx`
-
 import { Box, Button, TextField } from "@mui/material";
 import type React from "react";
 
@@ -8,7 +6,7 @@ type Props = {
     onChange: (v: string) => void;
     onSend: () => void;
     disabled?: boolean;
-    onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 };
 
 export const InputBar: React.FC<Props> = ({

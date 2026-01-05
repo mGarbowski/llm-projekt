@@ -1,4 +1,3 @@
-// `frontend/src/api.ts`
 export type Role = "user" | "assistant";
 export type Source = {
     id: string;
@@ -42,7 +41,9 @@ export async function streamCompletion(
         }
 
         const reader = res.body?.getReader();
-        if (!reader) throw new Error("No streaming body");
+        if (!reader) {
+            throw new Error("No streaming body");
+        }
 
         const decoder = new TextDecoder();
         let buffer = "";
@@ -53,6 +54,7 @@ export async function streamCompletion(
             buffer += decoder.decode(value, { stream: true });
 
             let idx: number;
+            // biome-ignore lint/suspicious/noAssignInExpressions: <TODO refactor>
             while ((idx = buffer.indexOf("\n\n")) !== -1) {
                 const raw = buffer.slice(0, idx);
                 buffer = buffer.slice(idx + 2);
@@ -89,6 +91,7 @@ export async function streamCompletion(
                             tokenOrObj !== null &&
                             "text" in tokenOrObj
                         )
+                            // biome-ignore lint/suspicious/noExplicitAny: <TODO refactor>
                             callbacks.onToken(String((tokenOrObj as any).text));
                         else callbacks.onToken(String(tokenOrObj));
                     } catch {
@@ -119,6 +122,7 @@ export async function streamCompletion(
             }
         }
     } catch (err) {
+        // biome-ignore lint/suspicious/noExplicitAny: <TODO refactor>
         if ((err as any)?.name === "AbortError") {
             callbacks.onError?.(new Error("Streaming aborted"));
             return;
