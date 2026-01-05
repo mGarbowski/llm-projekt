@@ -48,7 +48,6 @@ class Reranker:
             "sdadas/polish-reranker-roberta-v3",
             default_activation_function=torch.nn.Identity(),
             max_length=8192,
-            device="cuda",
             trust_remote_code=True,
             model_kwargs={"torch_dtype": torch.bfloat16}
         )

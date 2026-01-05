@@ -10,6 +10,9 @@ index *ARGS:
 seed *ARGS:
     uv run -m notes_rag.scripts.seed {{ARGS}}
 
+answer PROMPT:
+    uv run -m notes_rag.scripts.answer "{{PROMPT}}"
+
 drop_db:
     docker compose down -v
 
