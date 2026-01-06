@@ -2,6 +2,8 @@
 
 Mikołaj Garbowski
 
+![Zrzut ekranu z aplikacji](docs/screenshot.png)
+
 ## Opis
 Celem projektu jest implementacja systemu Retrieval-Augmented Generation (RAG) wykorzystującego
 duży model językowy (LLM) do generowania odpowiedzi na pytania użytkownika na podstawie bazy dokumentów oraz
