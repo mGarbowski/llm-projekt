@@ -12,6 +12,3 @@ wheels/
 # IDE config
 .idea
 .vscode
-
-# Data
-data/

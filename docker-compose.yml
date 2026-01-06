@@ -1,23 +1,17 @@
 version: "3.8"
 
 services:
-  chromadb:
-    image: chromadb/chroma:latest
-    container_name: llm_projekt_chromadb
-    ports:
-      - "9000:8000"
-    volumes:
-        - chromadb_data:/data
-    deploy:
-      resources:
-        reservations:
-          devices:
-              - capabilities: [ gpu ]
-
-    runtime: nvidia
+  rag_db:
+    image: pgvector/pgvector:pg16
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      POSTGRES_DB: rag_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+        - rag_db_data:/var/lib/postgresql/data
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+        - "5432:5432"
 
 volumes:
-  chromadb_data:
+  rag_db_data:
