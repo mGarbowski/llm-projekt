@@ -67,6 +67,8 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
 ## Źródła
 * https://medium.com/@jesvinkjustin/from-zero-to-rag-the-art-of-document-chunking-and-embedding-for-rag-d9764695cc46
 * https://medium.com/@nitinprodduturi/using-postgresql-as-a-vector-database-for-rag-retrieval-augmented-generation-c62cfebd9560
+* https://www.evidentlyai.com/ranking-metrics/precision-recall-at-k
+* https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr
 
 ## TODO
 * Przygotowanie zbioru testowego
