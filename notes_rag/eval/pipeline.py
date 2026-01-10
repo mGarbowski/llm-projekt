@@ -8,7 +8,7 @@ from rouge_score import rouge_scorer
 from sacrebleu import corpus_bleu
 from tqdm import tqdm
 
-from notes_rag.core.pipeline import Pipeline
+from notes_rag.core.pipeline import Pipeline, PipelineRequest
 from notes_rag.core.schema import NoteChunk
 from notes_rag.eval.dataset import TestDataset, DatasetItem
 
@@ -73,7 +73,7 @@ class PipelineEvaluation:
 
     @staticmethod
     def _response_for_single_item(item: DatasetItem, pipeline: Pipeline):
-        answer, context = pipeline.answer(item.query)
+        answer, context = pipeline.answer(PipelineRequest(question=item.query))
         return PipelineEvaluationResultItem(
             test_item=item,
             answer=answer,

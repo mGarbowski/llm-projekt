@@ -65,7 +65,6 @@ def main():
 
 
 class RerankingRetrieverAdapter(Retriever):
-
     def __init__(self, reranker, retrievers: list[Retriever]):
         self.reranker = reranker
         self.retrievers = retrievers
@@ -82,7 +81,7 @@ class RerankingRetrieverAdapter(Retriever):
 
 
 def _make_table_column(
-        result: RetrievalEvaluationResult, k_values: list[int]
+    result: RetrievalEvaluationResult, k_values: list[int]
 ) -> list[float]:
     return [
         *(result.recall_at_k(k) for k in k_values),
@@ -91,7 +90,7 @@ def _make_table_column(
 
 
 def make_table(
-        results: dict[str, RetrievalEvaluationResult], k_values: list[int]
+    results: dict[str, RetrievalEvaluationResult], k_values: list[int]
 ) -> pd.DataFrame:
     row_index = [
         *[f"Recall@{k}" for k in k_values],
