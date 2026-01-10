@@ -3,8 +3,19 @@ from pathlib import Path
 
 import pandas as pd
 
-from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Retriever, Reranker
-from notes_rag.core.schema import get_engine, DbConfig, create_session_factory, NoteChunkRepository, NoteChunk
+from notes_rag.core.retrieval import (
+    FulltextRetriever,
+    SemanticRetriever,
+    Retriever,
+    Reranker,
+)
+from notes_rag.core.schema import (
+    get_engine,
+    DbConfig,
+    create_session_factory,
+    NoteChunkRepository,
+    NoteChunk,
+)
 from notes_rag.eval.dataset import TestDataset
 from notes_rag.eval.retrieval import RetrievalEvaluation, RetrievalEvaluationResult
 
@@ -25,31 +36,46 @@ class RerankingRetrieverAdapter(Retriever):
         return reranked[:top_k]
 
 
-def _make_table_column(result: RetrievalEvaluationResult, k_values: list[int]) -> list[float]:
+def _make_table_column(
+    result: RetrievalEvaluationResult, k_values: list[int]
+) -> list[float]:
     return [
         *(result.recall_at_k(k) for k in k_values),
         *(result.mrr_at_k(k) for k in k_values),
     ]
 
-def make_table(results: dict[str, RetrievalEvaluationResult], k_values: list[int]) -> pd.DataFrame:
+
+def make_table(
+    results: dict[str, RetrievalEvaluationResult], k_values: list[int]
+) -> pd.DataFrame:
     row_index = [
         *[f"Recall@{k}" for k in k_values],
         *[f"MRR@{k}" for k in k_values],
     ]
 
     data = {
-        name: _make_table_column(result, k_values)
-        for name, result in results.items()
+        name: _make_table_column(result, k_values) for name, result in results.items()
     }
 
     return pd.DataFrame(index=row_index, data=data)
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate retrieval performance using various metrics.")
-    parser.add_argument("--dataset-path", type=Path, default=Path("data/eval/test.jsonl"),
-                        help="Path to the evaluation dataset in JSONL format.")
-    parser.add_argument("--output", type=Path, default=Path("reports/results/retrieval_results.csv"),
-                        help="Path to the CSV file containing retrieval results.")
+    parser = argparse.ArgumentParser(
+        description="Evaluate retrieval performance using various metrics."
+    )
+    parser.add_argument(
+        "--dataset-path",
+        type=Path,
+        default=Path("data/eval/test.jsonl"),
+        help="Path to the evaluation dataset in JSONL format.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("reports/results/retrieval_results.csv"),
+        help="Path to the CSV file containing retrieval results.",
+    )
     args = parser.parse_args()
     args.output.parent.mkdir(exist_ok=True, parents=True)
 
@@ -63,7 +89,9 @@ def main():
         fulltext_retriever = FulltextRetriever(repo)
         semantic_retriever = SemanticRetriever.default_model(repo)
         reranker = Reranker.with_default_model()
-        reranking_retriever = RerankingRetrieverAdapter(reranker, [semantic_retriever, fulltext_retriever])
+        reranking_retriever = RerankingRetrieverAdapter(
+            reranker, [semantic_retriever, fulltext_retriever]
+        )
 
         results = {
             "Fulltext Retriever": evaluation.evaluate(fulltext_retriever, max_k=10),

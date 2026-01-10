@@ -18,6 +18,7 @@ class DatasetItem:
             reference_answers=data["referenceAnswers"],
         )
 
+
 class TestDataset:
     def __init__(self, items: list[DatasetItem]):
         self.items = items
@@ -25,10 +26,7 @@ class TestDataset:
     @classmethod
     def load(cls, path: Path):
         with open(path) as file:
-            items = [
-                DatasetItem.from_dict(json.loads(line.strip()))
-                for line in file
-            ]
+            items = [DatasetItem.from_dict(json.loads(line.strip())) for line in file]
         return cls(items)
 
     def __len__(self):

@@ -8,7 +8,12 @@ import torch
 from notes_rag.core.generation import Generator
 from notes_rag.core.pipeline import Pipeline
 from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Reranker
-from notes_rag.core.schema import get_engine, DbConfig, create_session_factory, NoteChunkRepository
+from notes_rag.core.schema import (
+    get_engine,
+    DbConfig,
+    create_session_factory,
+    NoteChunkRepository,
+)
 from notes_rag.eval.dataset import TestDataset
 from notes_rag.eval.pipeline import PipelineEvaluation, PipelineEvaluationResult
 
@@ -45,10 +50,18 @@ def make_table(results: PipelineEvaluationResult) -> pd.DataFrame:
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate pipeline performance.")
-    parser.add_argument("--dataset-path", type=Path, default=Path("data/eval/test.jsonl"),
-                        help="Path to the evaluation dataset in JSONL format.")
-    parser.add_argument("--output", type=Path, default=Path("reports/results/pipeline_results.csv"),
-                        help="Path to the CSV file containing evaluation results.")
+    parser.add_argument(
+        "--dataset-path",
+        type=Path,
+        default=Path("data/eval/test.jsonl"),
+        help="Path to the evaluation dataset in JSONL format.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("reports/results/pipeline_results.csv"),
+        help="Path to the CSV file containing evaluation results.",
+    )
     args = parser.parse_args()
     args.output.parent.mkdir(exist_ok=True, parents=True)
 

@@ -61,7 +61,9 @@ class RetrievalEvaluation:
         )
 
     @staticmethod
-    def _process_item(item: DatasetItem, retriever: Retriever, max_k: int) -> ResultItem:
+    def _process_item(
+        item: DatasetItem, retriever: Retriever, max_k: int
+    ) -> ResultItem:
         retrieved_chunks = retriever.retrieve(item.query, top_k=max_k)
         retrieved_ids = [chunk.id for chunk in retrieved_chunks]
         return ResultItem(expected_ids=item.relevant_docs, retrieved=retrieved_ids)

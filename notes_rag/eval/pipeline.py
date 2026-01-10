@@ -1,4 +1,5 @@
 """Evaluate the performance of full RAG pipeline."""
+
 from dataclasses import dataclass
 from statistics import mean
 
@@ -24,7 +25,9 @@ class PipelineEvaluationResult:
     items: list[PipelineEvaluationResultItem]
 
     def bert_score(self):
-        precision, recall, f1_score = score(cands=self._predictions(), refs=self._references(), lang="pl")
+        precision, recall, f1_score = score(
+            cands=self._predictions(), refs=self._references(), lang="pl"
+        )
         return {
             "precision": precision.mean().item(),
             "recall": recall.mean().item(),
@@ -45,7 +48,9 @@ class PipelineEvaluationResult:
         }
 
     def bleu_score(self):
-        return corpus_bleu(hypotheses=self._predictions(), references=self._references()).score
+        return corpus_bleu(
+            hypotheses=self._predictions(), references=self._references()
+        ).score
 
     def _references(self) -> list[list[str]]:
         return [item.test_item.reference_answers for item in self.items]
