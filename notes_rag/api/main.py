@@ -9,11 +9,19 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from notes_rag.core.generation import Generator, DEFAULT_SYSTEM_PROMPT
-from notes_rag.core.models import load_bi_encoder_model, load_reranker_model, load_generator_model
+from notes_rag.core.models import (
+    load_bi_encoder_model,
+    load_reranker_model,
+    load_generator_model,
+)
 from notes_rag.core.pipeline import Pipeline
 from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Reranker
-from notes_rag.core.schema import get_engine, DbConfig, create_session_factory, NoteChunkRepository
-
+from notes_rag.core.schema import (
+    get_engine,
+    DbConfig,
+    create_session_factory,
+    NoteChunkRepository,
+)
 
 
 @asynccontextmanager
@@ -37,6 +45,7 @@ def get_db(request: Request):
     with session_factory() as session:
         yield session
 
+
 def get_pipeline(request: Request, db: Session = Depends(get_db)):
     state = request.app.state
 
@@ -52,6 +61,7 @@ def get_pipeline(request: Request, db: Session = Depends(get_db)):
         generator=generator,
     )
 
+
 app = FastAPI(lifespan=lifespan)
 origins = [
     "http://localhost:5173",
@@ -65,6 +75,7 @@ app.add_middleware(
     allow_credentials=False,
 )
 
+
 @app.post("/completion")
 def completion(body: dict[str, Any] = Body(...), rag: Pipeline = Depends(get_pipeline)):
     """Returns a generated answer and the sources used after generation finishes."""
@@ -74,19 +85,25 @@ def completion(body: dict[str, Any] = Body(...), rag: Pipeline = Depends(get_pip
 
     answer, context = rag.answer(question)
 
-    return {"answer": answer, "sources": [
-        {
-            "id": chunk.id,
-            "content": chunk.content,
-            "course": chunk.course,
-            "title": chunk.title,
-            "filename": chunk.filename,
-        }
-        for chunk in context
-    ]}
+    return {
+        "answer": answer,
+        "sources": [
+            {
+                "id": chunk.id,
+                "content": chunk.content,
+                "course": chunk.course,
+                "title": chunk.title,
+                "filename": chunk.filename,
+            }
+            for chunk in context
+        ],
+    }
+
 
 @app.post("/completion/stream")
-async def completion_stream(body: dict[str, Any] = Body(...), pipeline: Pipeline = Depends(get_pipeline)):
+async def completion_stream(
+    body: dict[str, Any] = Body(...), pipeline: Pipeline = Depends(get_pipeline)
+):
     """Streaming answer for a chatbot-style interface.
     Streams tokens as SSE events:
       - event 'message' (default) with `data: "<token text>"`

@@ -8,15 +8,15 @@ from transformers import pipeline
 def load_reranker_model():
     return CrossEncoder(
         "sdadas/polish-reranker-roberta-v3",
-        default_activation_function=torch.nn.Identity(),
+        activation_fn=torch.nn.Identity(),
         max_length=8192,
         trust_remote_code=True,
-        model_kwargs={"torch_dtype": torch.bfloat16},
-    )
+        model_kwargs={"dtype": torch.bfloat16},
+    ).eval()
 
 
 def load_bi_encoder_model():
-    return SentenceTransformer("sdadas/mmlw-retrieval-roberta-base")
+    return SentenceTransformer("sdadas/mmlw-retrieval-roberta-base").eval()
 
 
 def load_generator_model():
