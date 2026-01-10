@@ -20,6 +20,29 @@ type Callbacks = {
     onError: (err: Error) => void;
 };
 
+const fetchCompletionStream = async (question: string, signal?: AbortSignal): Promise<Response> => {
+    const response = await fetch(`${API_BASE}/completion/stream`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question}),
+        signal,
+    });
+    if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw new Error(text);
+    }
+
+    return response
+}
+
+const openReader = (response: Response): ReadableStreamDefaultReader<Uint8Array> => {
+    const reader = response.body?.getReader();
+    if (!reader) {
+        throw new Error("No streaming body");
+    }
+    return reader;
+}
+
 export async function streamCompletion(
     question: string,
     callbacks: Callbacks,
@@ -29,21 +52,8 @@ export async function streamCompletion(
     const combinedSignal = signal ?? controller.signal;
 
     try {
-        const res = await fetch(`${API_BASE}/completion/stream`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({question}),
-            signal: combinedSignal,
-        });
-        if (!res.ok) {
-            const text = await res.text().catch(() => "");
-            throw new Error(text || `HTTP ${res.status}`);
-        }
-
-        const reader = res.body?.getReader();
-        if (!reader) {
-            throw new Error("No streaming body");
-        }
+        const response = await fetchCompletionStream(question, combinedSignal);
+        const reader = openReader(response);
 
         const decoder = new TextDecoder();
         let buffer = "";
