@@ -10,7 +10,7 @@ export const Sources = ({ sources }: Props) => {
     return (
         <Box sx={{ mt: 1 }}>
             <Typography variant="caption" color="text.secondary">
-                Sources:
+                Źródła:
             </Typography>
             <List sx={{ pl: 2, mt: 0 }}>
                 {sources.map((s, i) => (

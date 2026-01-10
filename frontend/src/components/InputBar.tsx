@@ -30,7 +30,7 @@ export const InputBar: React.FC<Props> = ({
                 minRows={3}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="Type your question…"
+                placeholder="Zadaj pytanie..."
                 onKeyDown={onKeyDown}
                 fullWidth
             />
@@ -40,7 +40,7 @@ export const InputBar: React.FC<Props> = ({
                     onClick={onSend}
                     disabled={disabled}
                 >
-                    Send
+                    Wyślij
                 </Button>
             </Box>
         </Box>

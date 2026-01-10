@@ -23,7 +23,7 @@ export const MessageBubble: React.FC<Props> = ({
                 color="text.secondary"
                 sx={{ mb: 0.5 }}
             >
-                {chatRole === "user" ? "You" : "Assistant"}
+                {chatRole === "user" ? "Ty" : "Asystent"}
             </Typography>
             <Paper elevation={1} sx={{ p: 1.5, background: bg }}>
                 <MarkdownText text={content} />

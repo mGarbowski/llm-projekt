@@ -12,7 +12,7 @@ export type ChatMessage = {
     sources?: Source[];
 };
 
-const API_BASE = "http://localhost:8000";
+export const API_BASE = "http://localhost:8000";
 
 type Callbacks = {
     onToken: (token: string) => void;
