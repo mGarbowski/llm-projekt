@@ -1,8 +1,8 @@
 import { Box, Divider, Typography } from "@mui/material";
 import type React from "react";
 import { useEffect, useRef } from "react";
-import type { ChatMessage } from "./api";
-import { MessageBubble } from "./MessageBubble";
+import type { ChatMessage } from "../api.ts";
+import { MessageBubble } from "./MessageBubble.tsx";
 
 type Props = {
     history: ChatMessage[];

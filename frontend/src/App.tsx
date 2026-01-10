@@ -3,8 +3,8 @@ import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ChatMessage, Source } from "./api";
 import { streamCompletion } from "./api";
-import { ChatWindow } from "./ChatWindow";
-import { InputBar } from "./InputBar";
+import { ChatWindow } from "./components/ChatWindow.tsx";
+import { InputBar } from "./components/InputBar.tsx";
 
 export const App: React.FC = () => {
     const [history, setHistory] = useState<ChatMessage[]>([]);
