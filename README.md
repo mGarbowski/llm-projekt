@@ -123,9 +123,6 @@ RAG
 
 * Konfiguracja modułów dla języka polskiego w PostgreSQL
     * na razie jest używany wariant `simple` - daleki od ideału dla tego zastosowania
-* Poprawienie klasy Pipeline
-    * pełna parametryzacja zapytań
-* Otypowanie endpointów API
 * Dopracowanie frontendu
     * UI po polsku
     * błąd z podwójną wiadomością na czacie
