@@ -1,24 +1,15 @@
+from __future__ import annotations
+
 import sys
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 
-import torch
-from transformers import Pipeline, pipeline, TextIteratorStreamer
+from transformers import Pipeline, TextIteratorStreamer
 
 from notes_rag.core.models import load_generator_model
 from notes_rag.core.schema import NoteChunk
 
 DEFAULT_SYSTEM_PROMPT = "Jesteś pomocnym asystentem, odpowiadaj krótko po polsku na podstawie kontekstu. Cytuj źródła w nawiasach kwadratowych [...]."
-
-
-@dataclass(frozen=True)
-class GenerationRequest:
-    user_prompt: str
-    context: list[NoteChunk]
-    message_history: list[dict[str, str]] = field(default_factory=list)
-    max_new_tokens: int = 256
-    temperature: float = 0.7
-    top_p: float = 0.95
 
 
 class Generator:
@@ -54,7 +45,7 @@ class Generator:
         return generation_output[0]["generated_text"].strip()
 
     def generate_stream(
-        self, generation_request: "GenerationRequest", on_token=None
+        self, generation_request: GenerationRequest, on_token=None
     ) -> str:
         """
         Stream tokens in real time. `on_token` is a callable that receives each text chunk.
@@ -109,7 +100,7 @@ class Generator:
         self,
         user_prompt: str,
         context: list[NoteChunk],
-        message_history: list[dict[str, str]],
+        message_history: list[Message],
     ):
         context_text = (
             "\n\n".join(
@@ -124,7 +115,7 @@ class Generator:
 
         messages = [
             {"role": "system", "content": self.system_prompt},
-            *message_history,
+            *[asdict(msg) for msg in message_history],
             {
                 "role": "assistant",
                 "content": f"Źródła do kolejnej odpowiedzi:\n{context_text}",
@@ -135,3 +126,19 @@ class Generator:
         return self.llm.tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
+
+
+@dataclass(frozen=True)
+class GenerationRequest:
+    user_prompt: str
+    context: list[NoteChunk]
+    message_history: list[Message] = field(default_factory=list)
+    max_new_tokens: int = 256
+    temperature: float = 0.7
+    top_p: float = 0.95
+
+
+@dataclass(frozen=True)
+class Message:
+    role: str
+    content: str

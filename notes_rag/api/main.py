@@ -1,20 +1,22 @@
 import asyncio
 import json
 from contextlib import asynccontextmanager
+from enum import Enum
 from typing import Any
 
 from fastapi import FastAPI, Body, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from notes_rag.core.generation import Generator, DEFAULT_SYSTEM_PROMPT
+from notes_rag.core.generation import Generator, DEFAULT_SYSTEM_PROMPT, Message
 from notes_rag.core.models import (
     load_bi_encoder_model,
     load_reranker_model,
     load_generator_model,
 )
-from notes_rag.core.pipeline import Pipeline
+from notes_rag.core.pipeline import Pipeline, PipelineRequest
 from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Reranker
 from notes_rag.core.schema import (
     get_engine,
@@ -76,42 +78,82 @@ app.add_middleware(
 )
 
 
-@app.post("/completion")
-def completion(body: dict[str, Any] = Body(...), rag: Pipeline = Depends(get_pipeline)):
+class MessageHistoryRole(str, Enum):
+    user = "user"
+    assistant = "assistant"
+
+
+class MessageHistoryItem(BaseModel):
+    role: MessageHistoryRole
+    content: str
+
+
+class CompletionRequest(BaseModel):
+    question: str
+    message_history: list[MessageHistoryItem] = Field(default_factory=list)
+    retrieval_top_k: int = 5
+    max_new_tokens: int = 256
+    temperature: float = 0.7
+    generator_top_p: float = 0.95
+
+    def to_pipeline_request(self) -> PipelineRequest:
+        return PipelineRequest(
+            question=self.question,
+            top_k=self.retrieval_top_k,
+            message_history=[
+                Message(role=msg.role, content=msg.content)
+                for msg in self.message_history
+            ],
+            max_new_tokens=self.max_new_tokens,
+            temperature=self.temperature,
+            top_p=self.generator_top_p,
+        )
+
+
+class SourceItem(BaseModel):
+    id: str
+    content: str
+    course: str
+    title: str
+    filename: str
+
+
+class CompletionResponse(BaseModel):
+    answer: str
+    sources: list[SourceItem]
+
+
+@app.post("/completion", response_model=CompletionResponse)
+def completion(
+    body: CompletionRequest = Body(...), rag: Pipeline = Depends(get_pipeline)
+):
     """Returns a generated answer and the sources used after generation finishes."""
-    question = body.get("question")
-    if not question:
-        return JSONResponse({"error": "Missing field `question`."}, status_code=400)
+    answer, context = rag.answer(body.to_pipeline_request())
 
-    answer, context = rag.answer(question)
-
-    return {
-        "answer": answer,
-        "sources": [
-            {
-                "id": chunk.id,
-                "content": chunk.content,
-                "course": chunk.course,
-                "title": chunk.title,
-                "filename": chunk.filename,
-            }
+    return CompletionResponse(
+        answer=answer,
+        sources=[
+            SourceItem(
+                id=str(chunk.id),
+                content=chunk.content,
+                course=chunk.course,
+                title=chunk.title,
+                filename=chunk.filename,
+            )
             for chunk in context
         ],
-    }
+    )
 
 
 @app.post("/completion/stream")
 async def completion_stream(
-    body: dict[str, Any] = Body(...), pipeline: Pipeline = Depends(get_pipeline)
+    body: CompletionRequest = Body(...), pipeline: Pipeline = Depends(get_pipeline)
 ):
     """Streaming answer for a chatbot-style interface.
     Streams tokens as SSE events:
       - event 'message' (default) with `data: "<token text>"`
       - event 'done' with `data: { "sources": [...] }` when generation finishes
     """
-    question = body.get("question")
-    if not question:
-        return JSONResponse({"error": "Missing field `question`."}, status_code=400)
 
     loop = asyncio.get_event_loop()
     q: asyncio.Queue = asyncio.Queue()
@@ -123,7 +165,9 @@ async def completion_stream(
 
     def run_streaming():
         # runs in a threadpool — call blocking pipeline streaming method
-        final, context = pipeline.answer_stream(question, on_token=on_token)
+        final, context = pipeline.answer_stream(
+            body.to_pipeline_request(), on_token=on_token
+        )
         result["context"] = context
         # signal end
         loop.call_soon_threadsafe(q.put_nowait, None)

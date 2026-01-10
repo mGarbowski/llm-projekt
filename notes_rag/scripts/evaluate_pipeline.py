@@ -18,36 +18,6 @@ from notes_rag.eval.dataset import TestDataset
 from notes_rag.eval.pipeline import PipelineEvaluation, PipelineEvaluationResult
 
 
-def make_table(results: PipelineEvaluationResult) -> pd.DataFrame:
-    row_index = [
-        "BERT Score - Precision",
-        "BERT Score - Recall",
-        "BERT Score - F1",
-        "ROUGE-L - Precision",
-        "ROUGE-L - Recall",
-        "ROUGE-L - F1",
-        "BLEU Score",
-    ]
-
-    bert = results.bert_score()
-    rouge = results.rouge_score()
-    bleu = results.bleu_score()
-
-    data = {
-        "Pipeline": [
-            bert["precision"],
-            bert["recall"],
-            bert["f1"],
-            rouge["precision"],
-            rouge["recall"],
-            rouge["f1"],
-            bleu,
-        ]
-    }
-
-    return pd.DataFrame(index=row_index, data=data)
-
-
 def main():
     parser = argparse.ArgumentParser(description="Evaluate pipeline performance.")
     parser.add_argument(
@@ -94,6 +64,36 @@ def main():
     table = make_table(result)
     print(table.to_markdown())
     table.to_csv(args.output)
+
+
+def make_table(results: PipelineEvaluationResult) -> pd.DataFrame:
+    row_index = [
+        "BERT Score - Precision",
+        "BERT Score - Recall",
+        "BERT Score - F1",
+        "ROUGE-L - Precision",
+        "ROUGE-L - Recall",
+        "ROUGE-L - F1",
+        "BLEU Score",
+    ]
+
+    bert = results.bert_score()
+    rouge = results.rouge_score()
+    bleu = results.bleu_score()
+
+    data = {
+        "Pipeline": [
+            bert["precision"],
+            bert["recall"],
+            bert["f1"],
+            rouge["precision"],
+            rouge["recall"],
+            rouge["f1"],
+            bleu,
+        ]
+    }
+
+    return pd.DataFrame(index=row_index, data=data).round(2)
 
 
 if __name__ == "__main__":

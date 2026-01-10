@@ -20,46 +20,6 @@ from notes_rag.eval.dataset import TestDataset
 from notes_rag.eval.retrieval import RetrievalEvaluation, RetrievalEvaluationResult
 
 
-class RerankingRetrieverAdapter(Retriever):
-    def __init__(self, reranker, retrievers: list[Retriever]):
-        self.reranker = reranker
-        self.retrievers = retrievers
-
-    def retrieve(self, query: str, top_k: int = 5) -> list[NoteChunk]:
-        candidates = [
-            candidate
-            for retriever in self.retrievers
-            for candidate in retriever.retrieve(query, top_k=top_k)
-        ]
-
-        reranked = self.reranker.rerank(query, candidates)
-        return reranked[:top_k]
-
-
-def _make_table_column(
-    result: RetrievalEvaluationResult, k_values: list[int]
-) -> list[float]:
-    return [
-        *(result.recall_at_k(k) for k in k_values),
-        *(result.mrr_at_k(k) for k in k_values),
-    ]
-
-
-def make_table(
-    results: dict[str, RetrievalEvaluationResult], k_values: list[int]
-) -> pd.DataFrame:
-    row_index = [
-        *[f"Recall@{k}" for k in k_values],
-        *[f"MRR@{k}" for k in k_values],
-    ]
-
-    data = {
-        name: _make_table_column(result, k_values) for name, result in results.items()
-    }
-
-    return pd.DataFrame(index=row_index, data=data)
-
-
 def main():
     parser = argparse.ArgumentParser(
         description="Evaluate retrieval performance using various metrics."
@@ -102,6 +62,46 @@ def main():
     results_df = make_table(results, k_values=[1, 3, 5, 10])
     print(results_df.to_markdown())
     results_df.to_csv(args.output)
+
+
+class RerankingRetrieverAdapter(Retriever):
+    def __init__(self, reranker, retrievers: list[Retriever]):
+        self.reranker = reranker
+        self.retrievers = retrievers
+
+    def retrieve(self, query: str, top_k: int = 5) -> list[NoteChunk]:
+        candidates = [
+            candidate
+            for retriever in self.retrievers
+            for candidate in retriever.retrieve(query, top_k=top_k)
+        ]
+
+        reranked = self.reranker.rerank(query, candidates)
+        return reranked[:top_k]
+
+
+def _make_table_column(
+    result: RetrievalEvaluationResult, k_values: list[int]
+) -> list[float]:
+    return [
+        *(result.recall_at_k(k) for k in k_values),
+        *(result.mrr_at_k(k) for k in k_values),
+    ]
+
+
+def make_table(
+    results: dict[str, RetrievalEvaluationResult], k_values: list[int]
+) -> pd.DataFrame:
+    row_index = [
+        *[f"Recall@{k}" for k in k_values],
+        *[f"MRR@{k}" for k in k_values],
+    ]
+
+    data = {
+        name: _make_table_column(result, k_values) for name, result in results.items()
+    }
+
+    return pd.DataFrame(index=row_index, data=data).round(2)
 
 
 if __name__ == "__main__":
