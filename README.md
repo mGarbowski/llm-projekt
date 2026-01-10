@@ -64,6 +64,28 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
       * BLUE
       * BERTScore
 
+## Zbiór testowy
+Na potrzeby ewaluacji opracowałem zbiór testowy składający się z 38 pytań 
+wraz z listą istotnych fragmentów dokumentów oraz wzorcowymi odpowiedziami.
+
+Plik [`test.jsonl`](./data/eval/test.jsonl) w formacie JSONL (każda linijka to osobny JSON),
+pojedynczy wiersz jest w formacie:
+
+```json
+{
+  "query": "Co to jest partycjonowanie zakresowe i kiedy warto je stosować?",
+  "relevantDocs": [
+    "25a8cb17-d17f-4522-8243-3da0f8f6491f",
+    "decb07c0-fb6e-4fb5-80ac-520eda2521e2"
+  ],
+  "referenceAnswers": [
+    "Partycjonowanie zakresowe dzieli dane na partycje według zakresów wartości klucza..."
+  ]
+}
+```
+
+Został przygotowany z użyciem LLM GPT-5 mini i poddany ręcznej weryfikacji i korekcie.
+
 ## Źródła
 * https://medium.com/@jesvinkjustin/from-zero-to-rag-the-art-of-document-chunking-and-embedding-for-rag-d9764695cc46
 * https://medium.com/@nitinprodduturi/using-postgresql-as-a-vector-database-for-rag-retrieval-augmented-generation-c62cfebd9560
@@ -71,7 +93,6 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
 * https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr
 
 ## TODO
-* Przygotowanie zbioru testowego
 * Ewaluacja
 * Konfiguracja modułów dla języka polskiego w PostgreSQL
   * na razie jest używany wariant `simple` - daleki od ideału dla tego zastosowania
