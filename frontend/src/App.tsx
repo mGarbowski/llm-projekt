@@ -12,6 +12,7 @@ export const App: React.FC = () => {
         content: string;
         sources?: Source[];
     } | null>(null);
+    const currentRef = useRef<{ content: string; sources?: Source[] } | null>(null); // new
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -28,7 +29,9 @@ export const App: React.FC = () => {
         setError(null);
         setLoading(true);
         setHistory((s) => [...s, { role: "user", content: question }]);
-        setCurrent({ content: "", sources: [] });
+        const initialCurrent = { content: "", sources: [] as Source[] };
+        setCurrent(initialCurrent);
+        currentRef.current = initialCurrent;
 
         const controller = new AbortController();
         abortRef.current = controller;
@@ -39,33 +42,29 @@ export const App: React.FC = () => {
                 {
                     onToken: (token) => {
                         setCurrent((prev) => {
-                            if (!prev) return { content: token, sources: [] };
-                            return { ...prev, content: prev.content + token };
+                            const next = prev ? { ...prev, content: prev.content + token } : { content: token, sources: [] };
+                            currentRef.current = next;
+                            return next;
                         });
                     },
                     onDone: (sources) => {
-                        setCurrent((prev) => {
-                            const final = {
-                                content: prev?.content ?? "",
+                        const content = currentRef.current?.content ?? "";
+                        setHistory(h => [
+                            ...h,
+                            {
+                                role: "assistant",
+                                content,
                                 sources,
-                            };
-                            // push finished assistant message into history
-                            setHistory((h) => [
-                                ...h,
-                                {
-                                    role: "assistant",
-                                    content: final.content,
-                                    sources: final.sources,
-                                },
-                            ]);
-                            return null;
-                        });
+                            },
+                        ]);
+                        setCurrent(null);
                         setLoading(false);
                     },
                     onError: (err) => {
                         setError(err.message);
                         setLoading(false);
                         setCurrent(null);
+                        currentRef.current = null;
                     },
                 },
                 controller.signal,

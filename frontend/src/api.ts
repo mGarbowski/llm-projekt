@@ -31,8 +31,8 @@ export async function streamCompletion(
     try {
         const res = await fetch(`${API_BASE}/completion/stream`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question }),
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({question}),
             signal: combinedSignal,
         });
         if (!res.ok) {
@@ -49,9 +49,9 @@ export async function streamCompletion(
         let buffer = "";
 
         while (true) {
-            const { value, done } = await reader.read();
+            const {value, done} = await reader.read();
             if (done) break;
-            buffer += decoder.decode(value, { stream: true });
+            buffer += decoder.decode(value, {stream: true});
 
             let idx: number;
             // biome-ignore lint/suspicious/noAssignInExpressions: <TODO refactor>
@@ -102,25 +102,7 @@ export async function streamCompletion(
             }
         }
 
-        // flush leftover buffer
-        if (buffer.length > 0) {
-            if (buffer.startsWith("event: done")) {
-                const dataMatch = buffer.match(/data:\s*(.*)/s);
-                if (dataMatch) {
-                    try {
-                        const parsed = JSON.parse(dataMatch[1].trim());
-                        callbacks.onDone(parsed.sources ?? []);
-                    } catch (e) {
-                        callbacks.onError?.(
-                            e instanceof Error ? e : new Error(String(e)),
-                        );
-                    }
-                }
-            } else {
-                // treat leftover as token
-                callbacks.onToken(buffer);
-            }
-        }
+
     } catch (err) {
         // biome-ignore lint/suspicious/noExplicitAny: <TODO refactor>
         if ((err as any)?.name === "AbortError") {
