@@ -16,7 +16,7 @@ index *ARGS:
 seed *ARGS:
     uv run -m notes_rag.scripts.seed {{ARGS}}
 
-# Answer the promp using RAG
+# Answer the prompt using RAG
 answer PROMPT:
     uv run -m notes_rag.scripts.answer "{{PROMPT}}"
 
