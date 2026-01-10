@@ -60,8 +60,8 @@ Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
     * MRR (Mean Reciprocal Rank)
 * Ewaluacja jakości generowanych odpowiedzi
   * metryki
-      * ROGUE
-      * BLUE
+      * ROUGE
+      * BLEU
       * BERTScore
 
 ## Zbiór testowy
@@ -93,6 +93,12 @@ Został przygotowany z użyciem LLM GPT-5 mini i poddany ręcznej weryfikacji i 
 * https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr
 
 ## TODO
-* Ewaluacja
 * Konfiguracja modułów dla języka polskiego w PostgreSQL
   * na razie jest używany wariant `simple` - daleki od ideału dla tego zastosowania
+* Poprawienie klasy Pipeline
+  * pełna parametryzacja zapytań
+* Otypowanie endpointów API
+* Dopracowanie frontendu
+  * UI po polsku
+  * błąd z podwójną wiadomością na czacie
+* Dopracować prompt generatora
