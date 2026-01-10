@@ -4,7 +4,7 @@ export type Source = {
     content: string;
     course: string;
     title: string;
-    filename?: string | null;
+    filename: string;
 };
 export type ChatMessage = {
     role: Role;
@@ -17,7 +17,7 @@ export const API_BASE = "http://localhost:8000";
 type Callbacks = {
     onToken: (token: string) => void;
     onDone: (sources: Source[]) => void;
-    onError?: (err: Error) => void;
+    onError: (err: Error) => void;
 };
 
 export async function streamCompletion(
