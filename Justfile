@@ -24,6 +24,10 @@ answer PROMPT:
 eval-retriever *ARGS:
     uv run -m notes_rag.scripts.evaluate_retrieval {{ARGS}}
 
+# Evaluate the full RAG pipeline
+eval-pipeline *ARGS:
+    uv run -m notes_rag.scripts.evaluate_pipeline {{ARGS}}
+
 # Database management
 
 # Delete database container and volumes
