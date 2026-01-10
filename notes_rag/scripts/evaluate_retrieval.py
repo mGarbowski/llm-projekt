@@ -51,6 +51,7 @@ def main():
     parser.add_argument("--output", type=Path, default=Path("reports/results/retrieval_results.csv"),
                         help="Path to the CSV file containing retrieval results.")
     args = parser.parse_args()
+    args.output.parent.mkdir(exist_ok=True, parents=True)
 
     dataset = TestDataset.load(args.dataset_path)
     evaluation = RetrievalEvaluation(dataset)
