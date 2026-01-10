@@ -4,7 +4,7 @@ from pathlib import Path
 from uuid import UUID
 
 
-@dataclass
+@dataclass(frozen=True)
 class DatasetItem:
     query: str
     relevant_docs: list[UUID]

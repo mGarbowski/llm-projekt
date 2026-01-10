@@ -15,6 +15,9 @@ seed *ARGS:
 answer PROMPT:
     uv run -m notes_rag.scripts.answer "{{PROMPT}}"
 
+eval-retriever *ARGS:
+    uv run -m notes_rag.scripts.evaluate_retrieval {{ARGS}}
+
 # Database management
 
 drop_db:
