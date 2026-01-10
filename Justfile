@@ -42,8 +42,6 @@ fmt:
 
 # Install dependencies
 install:
-    # Required for PostgreSQL client
-    sudo apt install -y build-essential libpq-dev python3-dev
     uv sync
 
 # Setup Hugging Face credentials (required for downloading gated models)
