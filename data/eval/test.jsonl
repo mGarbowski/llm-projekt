@@ -1,0 +1,383 @@
+{
+    "query": "Co to jest partycjonowanie zakresowe i kiedy warto je stosować?",
+    "relevantDocs": [
+        "25a8cb17-d17f-4522-8243-3da0f8f6491f",
+        "decb07c0-fb6e-4fb5-80ac-520eda2521e2"
+    ],
+    "referenceAnswers": [
+        "Partycjonowanie zakresowe dzieli dane na partycje według zakresów wartości klucza (np. daty). Ma sens gdy domena klucza jest duża — poprawia wydajność przez zmniejszenie konkurencji, umożliwia operacje na części danych (archiwizacja, backup, odtwarzanie) i redukuje rozmiar przetwarzanych obiektów."
+    ]
+}
+{
+    "query": "Jak rozmieszczać tabele i indeksy na dyskach, by zwiększyć wydajność i dostępność?",
+    "relevantDocs": [
+        "a5d3b553-ed36-4a08-9893-f5cf97dcef81",
+        "daf376bc-6a79-45df-88f1-2df26b349f96"
+    ],
+    "referenceAnswers": [
+        "Indeksy powinny być umieszczone na innych dyskach niż indeksowana tabela; jeśli to możliwe każdy indeks na osobnym dysku. Duże tabele partycjonować i równolegle partycjonować indeksy; najczęściej używane obiekty umieszczać na najszybszych dyskach; pliki jednej grupy rozkładać na różnych dyskach, a grup plików mieć co najmniej dwie."
+    ]
+}
+{
+    "query": "Co to jest indeks bitmapowy i kiedy jest opłacalny?",
+    "relevantDocs": [
+        "8d657aec-2fa2-42e1-b4b6-0adf706a2439",
+        "6b67edc9-cf3c-426d-891e-58ddfaee8097"
+    ],
+    "referenceAnswers": [
+        "Indeks bitmapowy przechowuje mapę bitową dla każdej wartości klucza i jest opłacalny na kolumnach mało selektywnych o stałej dziedzinie, zwłaszcza w hurtowniach danych. Umożliwia szybkie operacje logiczne (AND/OR) na wektorach bitowych i efektywne liczenie (COUNT), ale nie jest typowo użyteczny w OLTP."
+    ]
+}
+{
+    "query": "Czym jest High Water Mark (HWM) i jaki ma wpływ na skanowanie tabeli?",
+    "relevantDocs": [
+        "1766f707-0256-44f9-b69a-2224294f4810"
+    ],
+    "referenceAnswers": [
+        "High Water Mark to pozycja najdalszego INSERT — wyznacza koniec tabeli do przeglądu sekwencyjnego. Po DELETE HWM się nie cofa (chyba że TRUNCATE), więc skan sekwencyjny nadal obejmuje obszar do HWM."
+    ]
+}
+{
+    "query": "Jak działa indeks B+ (drzewiasty) i ile odczytów dysku zwykle wymaga?",
+    "relevantDocs": [
+        "67c4ed22-9d66-4c74-986a-9344e58c3b72",
+        "984d5b2f-0da3-44d5-8373-60f921a7e132",
+    ],
+    "referenceAnswers": [
+        "Indeks drzewiasty oparty jest na strukturze B+; liście zawierają rowid i są połączone dwukierunkowo. Dostęp wymaga wysokości drzewa plus jeden odczyt do wiersza, przy czym cache w pamięci zmniejsza rzeczywistą liczbę odczytów."
+    ]
+}
+{
+    "query": "Jakie są główne metody wykonywania złączeń i kiedy ich używać?",
+    "relevantDocs": [
+        "30401231-e23d-46f4-89b8-e9bf0ea99e0f",
+        "82ea7e5b-9368-46f3-978c-692769774fd6",
+        "805a00ae-0364-491a-804e-ae88b195f091",
+        "28d1de0e-442f-4f22-9506-4bcc634c52fe"
+    ],
+    "referenceAnswers": [
+        "Metoda pętli zagnieżdżonych (Nested Loop) jest dobra gdy jeden zbiór jest mały i dostępny przez indeks. Metoda mieszająca (Hash Join) efektywna dla dużych równozłączeń — każda tabela przeglądana raz. Metoda sort-merge (Sort-Merge) używana gdy hash nie może być zastosowany lub dane są/mają być posortowane; wymaga przestrzeni tymczasowej. Każda metoda ma swoje warunki optymalnego użycia."
+    ]
+}
+{
+    "query": "Do czego służą przestrzenie przywracania (undo) i jak wpływają na spójność odczytu?",
+    "relevantDocs": [
+        "7a232136-c018-4ac6-8f5d-5d9617b981a0"
+    ],
+    "referenceAnswers": [
+        "Przestrzenie przywracania (undo) przechowują dane pierwotne potrzebne do operacji ROLLBACK i zapewnienia spójności odczytu. Umożliwiają \"consistent read\" (czytanie stanu bazy z początku transakcji) i flashback, przechowując zmienione wersje danych tak długo, jak są potrzebne."
+    ]
+}
+{
+    "query": "Jak zarządzać zapamiętanymi planami wykonania zapytań?",
+    "relevantDocs": [
+        "58c5164c-7be9-4737-ae6d-2948b51b2598",
+        "d4645087-b88e-4dcc-83df-e777c7c313b5",
+        "9bc0e836-e212-470d-ba59-63fb6e16193c"
+    ],
+    "referenceAnswers": [
+        "Mechanizm zapamiętywania planów zapisuje opracowane plany w bazie i pozwala ponownie użyć planu bez ponownej optymalizacji. Można przechowywać kilka planów i wybierać najodpowiedniejszy w zależności od stanu bazy i parametrów, co daje stabilność wykonania zapytań."
+    ]
+}
+{
+    "query": "Jak optymalizator decyduje między dostępem sekwencyjnym a korzystaniem z indeksu?",
+    "relevantDocs": [
+        "98166733-248a-4804-9a6b-1121fa15d05e",
+        "5dcfd913-fd07-4d1c-a73e-c99aced09b0f",
+        "48361702-f4fa-49b9-b322-3a15dc0cfa78"
+    ],
+    "referenceAnswers": [
+        "Wybór zależy od selektywności warunku i statystyk: mała liczba wierszy — użycie indeksu; duża liczba wierszy — przegląd sekwencyjny. Optymalizator korzysta ze statystyk tabel, kolumn i indeksów by oszacować koszty IO i CPU; dla złożonych przypadków może łączyć wyniki kilku indeksów."
+    ]
+}
+{
+    "query": "Jak działa indeks mieszający bezpośredni i jakie ma ograniczenia?",
+    "relevantDocs": [
+        "78236938-dbbe-4a61-ab67-1edb97b7f755",
+        "2564d476-74f3-4afd-8407-8fdd8ea21e8d"
+    ],
+    "referenceAnswers": [
+        "Indeks mieszający bezpośredni wykorzystuje funkcję mieszającą modulo liczba bloków i w idealnym przypadku wymaga jednego dostępu dyskowego. Nie pozwala na wyszukiwanie zakresowe, zawsze wymaga całego klucza do wyszukiwania i może silnie degradować wydajność przy zapełnieniu bloków; istnieją też wersje z pośrednią strukturą (hash buckets) zmniejszające ryzyko przepełnienia."
+    ]
+}
+{
+    "query": "Co to są Stack Canaries i jak działają?",
+    "relevantDocs": [
+        "dd455d89-6bd6-4648-ac52-e53808a8f1c6"
+    ],
+    "referenceAnswers": [
+        "Stack Canaries to losowa wartość umieszczana na stosie przed adresem powrotu. Przed wykonaniem instrukcji `ret` sprawdza się, czy kanarek nie został zmieniony — jeśli tak, wykrywa się przepełnienie stosu i przerywa wykonywanie."
+    ]
+}
+{
+    "query": "Jakie narzędzia warto użyć do pentestów aplikacji webowych?",
+    "relevantDocs": [
+        "59748e15-1b2f-42c9-8145-33a4b4e32154"
+    ],
+    "referenceAnswers": [
+        "WebScarab — proxy umożliwiające modyfikację ruchu HTTP (cookies, nagłówki, treść) przy pentestach.",
+        "WebGoat — aplikacja edukacyjna z celowo wprowadzonymi podatnościami do nauki ataków i obrony."
+    ]
+}
+{
+    "query": "Jakie są typowe ataki na sesje i jak można im zapobiegać?",
+    "relevantDocs": [
+        "7de9ce70-fd22-42bc-88ad-ce78901c9f02",
+        "0180c08c-1c93-4cfa-a88a-18f93d6dd135"
+    ],
+    "referenceAnswers": [
+        "Ataki: przechwycenie sesji (session hijacking), Session Fixation, odgadnięcie ID sesji. Zapobieganie: regeneracja ID po zalogowaniu, szyfrowanie transmisji (TLS), wygaszanie sesji po nieaktywności, zmiana ID przy zmianie uprawnień.",
+        "Dobre praktyki: ustawianie bezpiecznych cookie, ograniczenie czasu życia sesji, usuwanie ID po wylogowaniu."
+    ]
+}
+{
+    "query": "Co to jest atak wstrzyknięcia (injection)?",
+    "relevantDocs": [
+        "b36ae09c-a9ff-4c8c-9db7-415d26603792"
+    ],
+    "referenceAnswers": [
+        "Wstrzyknięcie polega na tym, że dane wejściowe wyłamują się z kontekstu i są interpretowane jako kod wykonywany przez aplikację (np. SQL injection, command injection). Powoduje nieautoryzowane wykonanie poleceń i wyciek danych."
+    ]
+}
+{
+    "query": "Na czym polega szyfr hybrydowy?",
+    "relevantDocs": [
+        "5b390fe3-7a20-4136-8f6e-963decc6a65f"
+    ],
+    "referenceAnswers": [
+        "Szyfr hybrydowy łączy szyfr symetryczny (szyfrowanie dużych danych, szybkie) z asymetrycznym (szyfrowanie klucza symetrycznego dla odbiorców). Dane szyfruje się symetrycznie, a klucz sesyjny szyfruje się kluczem publicznym odbiorcy."
+    ]
+}
+{
+    "query": "Wymień tryby pracy algorytmów blokowych i krótko ich cechy.",
+    "relevantDocs": [
+        "0d3492e0-354c-4e0d-b423-89ff67878251"
+    ],
+    "referenceAnswers": [
+        "ECB — prosty, szyfruje każdy blok oddzielnie (niezalecany dla powtarzalnych danych). CBC — wiąże bloki poprzednimi szyfrogramami, wymaga IV. OFB/CFB — generują strumień z bloków, przydatne dla strumieni. CTR — tryb licznikowy, równoległy i wydajny."
+    ]
+}
+{
+    "query": "Co zapewniają protokoły AH i ESP w IPSec oraz jaka jest rola IKE?",
+    "relevantDocs": [
+        "331f8285-1615-4da0-875f-975707ed6083",
+        "6ef5cc29-6f2e-4c64-801e-16cacbc8fb05",
+        "190e888c-c8d7-401d-8c55-7246cff784b7",
+        "57a40a53-8ce2-4a71-9644-5b259f58bcbb"
+    ],
+    "referenceAnswers": [
+        "AH (Authentication Header) zapewnia integralność i autentyczność nagłówków pakietów. ESP (Encapsulating Security Payload) zapewnia poufność (szyfrowanie) oraz opcjonalnie integralność. IKE (Internet Key Exchange) negocjuje parametry i klucze sesji (zwykle na porcie UDP 500)."
+    ]
+}
+{
+    "query": "Co to jest Remote Code Execution (RCE) i jakie są konsekwencje?",
+    "relevantDocs": [
+        "da5f20f9-4f84-4faa-a8b4-2b4ca05f5608"
+    ],
+    "referenceAnswers": [
+        "RCE to podatność umożliwiająca zdalne wykonanie kodu na zaatakowanej maszynie. Konsekwencje: pełne przejęcie kontroli nad systemem, uruchamianie dowolnych programów, eskalacja ataku w sieci."
+    ]
+}
+{
+    "query": "Jakie techniki rekonesansu są używane przed atakiem na sieć?",
+    "relevantDocs": [
+        "a78ea52d-c871-4bce-aa09-bf78c0737f12",
+        "51e6d995-9744-49a0-ab35-27231afe131c",
+        "b0a91f62-3a47-4aa2-8a42-dce1d9a3d5cc",
+        "c824189d-3269-4560-b795-7b6990e43f2e"
+    ],
+    "referenceAnswers": [
+        "Rekonesans: zbieranie informacji o celu — skanowanie otwartych portów (nmap), wyszukiwanie publicznych informacji (whois, nslookup), korzystanie z wyszukiwarek typu Shodan lub Google dorking by znaleźć podatne usługi."
+    ]
+}
+{
+    "query": "Na czym polega problem czytelników i pisarzy i jak zapewnić wydajne współdzielenie rekordu?",
+    "relevantDocs": [
+        "f0a4e00c-2207-4ddf-972b-2da065b27307",
+        "b85e0d8e-4cfa-4955-b88a-1889f593d0a0"
+    ],
+    "referenceAnswers": [
+        "Wielu czytelników może jednocześnie czytać rekord, ale pisarz musi mieć wyłączny dostęp. Używa się licznika czytelników chronionego mutexem oraz mechanizmu semaforowego blokującego nowych czytelników gdy przychodzi pisarz, aby zmniejszyć blokowanie i poprawić wydajność."
+    ]
+}
+{
+    "query": "Co to jest semafor?",
+    "relevantDocs": [
+        "98f3fba8-04c7-467a-8d95-8816a31cd8f2",
+        "b000cba0-081b-483a-b3b4-63e6399ef8a0"
+    ],
+    "referenceAnswers": [
+        "Semafor to zmienna nieujemna sterująca synchronizacją, z operacjami P (proberen) i V (verhogen). P zmniejsza semafor i może zablokować proces jeśli wartość ≤0, V zwiększa semafor i potencjalnie budzi oczekujące procesy."
+    ]
+}
+{
+    "query": "Co robi instrukcja TSL?",
+    "relevantDocs": [
+        "20e7d4a5-da3c-4bb6-a179-eef45ecc34ba",
+        "e8d0cf4b-1abb-4d92-9de0-5db3fa3a63f6"
+    ],
+    "referenceAnswers": [
+        "TSL to atomowa instrukcja sprzętowa zamieniająca wartość rejestru i słowa w pamięci, gwarantująca niepodzielną operację ustawienia flagi. Pozwala zaimplementować poprawne wzajemne wykluczanie bez wyścigów (rozwiązuje problem zmiennych blokujących)."
+    ]
+}
+{
+    "query": "Na czym polega algorytm Petersona?",
+    "relevantDocs": [
+        "c58e444b-4011-4880-8624-973ae9c238c1",
+        "db960fa7-3585-435e-a127-7f08e236e70a"
+    ],
+    "referenceAnswers": [
+        "Peterson wykorzystuje tablicę zainteresowań i zmienną `turn` by zapewnić wzajemne wykluczanie dla dwóch procesów. Spełnia warunki bezpieczeństwa (tylko jeden w sekcji krytycznej) i brak blokady, ale scala się gorzej przy większej liczbie procesów bez uogólnienia."
+    ]
+}
+{
+    "query": "Jak poprawnie zaimplementować wzorzec producent-konsument używając semaforów?",
+    "relevantDocs": [
+        "ac211d71-6397-4f5f-9f22-dbd4926c0aed",
+        "648ed09e-4f2c-45fd-9b0f-3095cb5d35ba",
+        "0ade9bc6-aea2-4689-982c-07971ca4ad2c"
+    ],
+    "referenceAnswers": [
+        "Używa się trzech semaforów: `mutex` dla wzajemnego wykluczania dostępu do bufora, `empty` liczby pustych slotów i `full` liczby zajętych. Producent robi `empty.P()` przed `mutex.P()`, produkuje, potem `mutex.V()` i `full.V()`; konsument robi odwrotnie. Dzięki temu nie gubi się sygnałów i bufor działa poprawnie."
+    ]
+}
+{
+    "query": "Czym są monitory i jakie mają zalety względem semaforów?",
+    "relevantDocs": [
+        "47447adc-b02b-40d0-9b41-9772442c5986",
+        "59799151-58bf-4c97-8781-f40040716eec"
+    ],
+    "referenceAnswers": [
+        "Monitor to wysokopoziomowy mechanizm grupujący procedury i zmienne z wbudowanym wzajemnym wykluczaniem. Zapewnia bezpieczny interfejs, zmienne warunkowe i eliminuje problemy z gubieniem sygnałów typowe dla `sleep`/`wakeup` lub niewłaściwego użycia semaforów."
+    ]
+}
+{
+    "query": "Na czym polegają tryby przetwarzania wsadowy i interaktywny?",
+    "relevantDocs": [
+        "fb4726da-b708-49a0-b650-a6f0bde018ee"
+    ],
+    "referenceAnswers": [
+        "Tryb wsadowy (batch) to przetwarzanie bez udziału użytkownika, zadania uruchamiane są autonomicznie. Tryb interaktywny (on-line) wymaga bezpośredniej współpracy użytkownika z systemem, dając szybką odpowiedź i interakcję."
+    ]
+}
+{
+    "query": "Co oznaczają prawa plików rwxrwxrwx oraz co robi bit SUID?",
+    "relevantDocs": [
+        "f28c5697-df80-4ed3-8902-32ceb5361521",
+        "153a7b07-80a6-4fc4-aa2c-c56b992a3bd2"
+    ],
+    "referenceAnswers": [
+        "`rwxrwxrwx` to prawa odczytu, zapisu i wykonania dla właściciela, grupy i pozostałych. SUID powoduje, że program jest wykonywany z uprawnieniami właściciela (np. `passwd`), co umożliwia dostęp do zasobów niedostępnych dla zwykłego użytkownika."
+    ]
+}
+{
+    "query": "Co to jest DMA?",
+    "relevantDocs": [
+        "9fc06d94-e44f-4143-8fa9-fe8360d5c65d",
+        "9aadd38a-14b3-469c-a8ad-39faf21da61c",
+        "78f98cca-18c2-479f-b4cd-3911c919f156"
+    ],
+    "referenceAnswers": [
+        "DMA pozwala urządzeniu na bezpośredni transfer danych do pamięci bez angażowania CPU. Po zakończeniu transferu kontroler generuje przerwanie, procedura obsługi potwierdza przerwanie, odblokowuje proces użytkownika i wykonuje powrót z przerwania."
+    ]
+}
+{
+    "query": "Co to jest Docker Image?",
+    "relevantDocs": [
+        "1c58e11b-133f-4ed9-aa4d-fdbc074674eb",
+        "27295982-4cc1-4e92-88e9-333c5251dc66"
+    ],
+    "referenceAnswers": [
+        "To plik binarny zawierający wszystko co potrzebne do uruchomienia aplikacji w kontenerze: kod, biblioteki, binaria. Na jego podstawie uruchamia się kontener."
+    ]
+}
+{
+    "query": "Do czego służy komenda docker exec?",
+    "relevantDocs": [
+        "59736521-6ce2-4c6e-acf4-367e28e56f6c"
+    ],
+    "referenceAnswers": [
+        "`docker exec` uruchamia polecenie wewnątrz już działającego kontenera. Jest przydatna do debugowania i administracji uruchomionych kontenerów."
+    ]
+}
+{
+    "query": "Czy pod w kubernetes może mieć więcej niż 1 kontener?",
+    "relevantDocs": [
+        "b548e6b5-31ac-4559-8206-86240d993da0",
+        "620ec78f-16e0-4221-96eb-ad3543de040e"
+    ],
+    "referenceAnswers": [
+        "Pod jest najmniejszą jednostką wdrożeniową w Kubernetes i może zawierać jeden lub wiele kontenerów współdzielących zasoby i sieć. Pody grupują kontenery powiązane funkcjonalnie, ale nie są równoważne taskom w innych systemach orkiestracji."
+    ]
+}
+{
+    "query": "Jak działa tryb bridge w sieciach Dockera?",
+    "relevantDocs": [
+        "620ec78f-16e0-4221-96eb-ad3543de040e",
+        "406b8f09-5fd0-470b-97fb-a26e9d9b7bc8"
+    ],
+    "referenceAnswers": [
+        "W trybie bridge kontenery widzą się nawzajem w ramach jednego hosta, ale nie są widoczne bezpośrednio z zewnątrz hosta. To domyślny tryb sieciowy do izolacji komunikacji kontenerów na jednym hoście."
+    ]
+}
+{
+    "query": "Co to jest CI/CD i jakie korzyści daje użycie pipeline'u?",
+    "relevantDocs": [
+        "0e00bb97-6b6e-47aa-9a9a-1ca9fa625af7",
+        "0b502ce0-e512-4bbd-b6de-4ecd43baea91",
+        "49f25f11-fcc6-4185-ba29-d1d9fe5346aa",
+    ],
+    "referenceAnswers": [
+        "CI (Continuous Integration) i CD (Continuous Delivery/Deployment) to praktyki automatyzujące budowanie, testowanie i dostarczanie oprogramowania; pipeline to szereg kroków prowadzący do dostarczenia nowej wersji. Korzyści: szybsze i częstsze wdrożenia, automatyczne wyłapywanie błędów i skrócenie czasu dostarczania wartości biznesowej."
+    ]
+}
+{
+    "query": "Co zawiera Service Level Agreement (SLA)?",
+    "relevantDocs": [
+        "8e77234c-ab74-47f9-9cee-0af65ceb6c93",
+        "96dec7cc-192d-49cb-bcf4-21696a933122"
+    ],
+    "referenceAnswers": [
+        "SLA to umowa określająca poziom i warunki świadczenia usług, w tym czasy reakcji i rozwiązania dla różnych stopni krytyczności. Jest istotne, bo definiuje oczekiwania klienta i mechanizmy monitorowania oraz odpowiedzialności dostawcy."
+    ]
+}
+{
+    "query": "Do czego wykorzystuje się ELK w systemach mikroserwisowych?",
+    "relevantDocs": [
+        "7ec8e63f-2a4f-4530-aeec-909e6d11b097",
+        "4c2ab454-5837-48f6-aa9e-f6a7667a3b89"
+    ],
+    "referenceAnswers": [
+        "W mikroserwisach wszystkie logi powinny być zbierane w jednym miejscu; ELK (Logstash/Elasticsearch/Kibana) służy do przetwarzania, indeksowania i wizualizacji logów. Dzięki temu można tworzyć alerty, analizować czasy odpowiedzi i wykonywać root cause analysis."
+    ]
+}
+{
+    "query": "Do czego służą Docker Volumes?",
+    "relevantDocs": [
+        "466e278b-6550-4058-aeb6-2192d21fa0f7"
+    ],
+    "referenceAnswers": [
+        "Docker Volumes służą do przechowywania danych trwałych poza cyklem życia kontenera. Pozwalają zachować dane po wyłączeniu kontenera."
+    ]
+}
+{
+    "query": "Co to jest obserwowalność (observability), jakie narzędzia się wykorzystuje?",
+    "relevantDocs": [
+        "6aaaebf2-6c59-4811-9328-8367af231f5f",
+        "eb72471e-c69a-4fc9-9b9f-1bc93570e139",
+        "779348af-0a82-49a7-882f-87aadfedb500"
+    ],
+    "referenceAnswers": [
+        "Obserwowalność to miara jak dobrze można poznać wewnętrzny stan systemu na podstawie metryk, logów i śledzeń. Narzędzia: Prometheus/Grafana do metryk, ELK/ELK-stack do logów oraz narzędzia systemowe (`top`, `ps`, `free`) do diagnostyki na poziomie OS."
+    ]
+}
+{
+    "query": "Co można zrobić przez API Docker daemona?",
+    "relevantDocs": [
+        "4dfb57ac-d5d6-4c95-a8ad-1fa177fff8be"
+    ],
+    "referenceAnswers": [
+        "Docker daemon API to RESTowe API pozwalające zarządzać kontenerami, obrazami i orkiestracją (swarm). Ma endpointy do listowania/uruchamiania kontenerów, uzyskiwania statystyk i zarządzania obrazami, np. analogiczne do poleceń `docker` w CLI."
+    ]
+}
+
