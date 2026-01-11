@@ -9,7 +9,7 @@ from sacrebleu import corpus_bleu
 from tqdm import tqdm
 
 from notes_rag.core.pipeline import Pipeline, PipelineRequest
-from notes_rag.core.schema import NoteChunk
+from notes_rag.core.db.model import NoteChunk
 from notes_rag.eval.dataset import TestDataset, DatasetItem
 
 

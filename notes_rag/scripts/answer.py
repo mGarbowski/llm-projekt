@@ -5,12 +5,10 @@ from argparse import ArgumentParser
 from notes_rag.core.generation import Generator
 from notes_rag.core.pipeline import Pipeline, PipelineRequest
 from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Reranker
-from notes_rag.core.schema import (
-    get_engine,
-    DbConfig,
-    create_session_factory,
+from notes_rag.core.notes_repository import (
     NoteChunkRepository,
 )
+from notes_rag.core.db.connection import DbConfig, get_engine, create_session_factory
 
 
 def main():

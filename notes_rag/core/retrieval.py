@@ -5,7 +5,8 @@ from sentence_transformers import SentenceTransformer, CrossEncoder
 
 from notes_rag.core.config import SEMANTIC_RETRIEVER_QUERY_PREFIX
 from notes_rag.core.models import load_reranker_model, load_bi_encoder_model
-from notes_rag.core.schema import NoteChunk, NoteChunkRepository
+from notes_rag.core.notes_repository import NoteChunkRepository
+from notes_rag.core.db.model import NoteChunk
 
 
 class Retriever(Protocol):

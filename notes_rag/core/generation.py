@@ -8,7 +8,7 @@ from transformers import Pipeline, TextIteratorStreamer
 
 from notes_rag.core.config import DEFAULT_SYSTEM_PROMPT
 from notes_rag.core.models import load_generator_model
-from notes_rag.core.schema import NoteChunk
+from notes_rag.core.db.model import NoteChunk
 
 
 class Generator:

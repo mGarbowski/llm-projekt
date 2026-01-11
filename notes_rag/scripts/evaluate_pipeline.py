@@ -8,12 +8,10 @@ import torch
 from notes_rag.core.generation import Generator
 from notes_rag.core.pipeline import Pipeline
 from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Reranker
-from notes_rag.core.schema import (
-    get_engine,
-    DbConfig,
-    create_session_factory,
+from notes_rag.core.notes_repository import (
     NoteChunkRepository,
 )
+from notes_rag.core.db.connection import DbConfig, get_engine, create_session_factory
 from notes_rag.eval.dataset import TestDataset
 from notes_rag.eval.pipeline import PipelineEvaluation, PipelineEvaluationResult
 

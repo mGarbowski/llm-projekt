@@ -3,13 +3,8 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
-from notes_rag.core.schema import (
-    get_engine,
-    Base,
-    NoteChunk,
-    DbConfig,
-    create_fulltext_index,
-)
+from notes_rag.core.db.connection import DbConfig, get_engine
+from notes_rag.core.db.model import Base, NoteChunk, create_fulltext_index
 
 
 def main():
