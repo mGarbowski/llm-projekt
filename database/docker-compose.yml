@@ -2,16 +2,18 @@ version: "3.8"
 
 services:
   rag_db:
-    image: pgvector/pgvector:pg16
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       POSTGRES_DB: rag_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-        - rag_db_data:/var/lib/postgresql/data
-        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - rag_db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-        - "5432:5432"
+      - "5432:5432"
 
 volumes:
   rag_db_data:

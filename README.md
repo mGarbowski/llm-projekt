@@ -118,6 +118,7 @@ RAG
 * https://medium.com/@nitinprodduturi/using-postgresql-as-a-vector-database-for-rag-retrieval-augmented-generation-c62cfebd9560
 * https://www.evidentlyai.com/ranking-metrics/precision-recall-at-k
 * https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr
+* [Pliki konfiguracyjne do wyszukiwania pełnotekstowego w PostgreSQL dla języka polskiego](https://github.com/judehunter/polish-tsearch)
 
 ## TODO
 
