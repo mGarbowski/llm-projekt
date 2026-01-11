@@ -123,7 +123,4 @@ RAG
 
 * Konfiguracja modułów dla języka polskiego w PostgreSQL
     * na razie jest używany wariant `simple` - daleki od ideału dla tego zastosowania
-* Dopracowanie frontendu
-    * UI po polsku
-    * błąd z podwójną wiadomością na czacie
 * Dopracować prompt generatora
