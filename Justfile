@@ -56,7 +56,7 @@ setup-hf:
 
 # Start backend development server
 devb:
-    fastapi dev notes_rag/api/main.py --reload
+    uv run fastapi dev notes_rag/api/main.py --reload
 
 # Start frontend development server
 devf:
