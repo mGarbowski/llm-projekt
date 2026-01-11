@@ -68,46 +68,12 @@ export async function streamCompletion(
             while ((idx = buffer.indexOf("\n\n")) !== -1) {
                 const raw = buffer.slice(0, idx);
                 buffer = buffer.slice(idx + 2);
-
-                const lines = raw.split(/\r?\n/);
-                let event = "message";
-                const dataLines: string[] = [];
-                for (const line of lines) {
-                    if (line.startsWith("event:")) event = line.slice(6).trim();
-                    else if (line.startsWith("data:"))
-                        dataLines.push(line.slice(5).trim());
-                }
-                const dataStr = dataLines.join("\n");
+                const {event, dataStr} = parseMessage(raw);
 
                 if (event === "done") {
-                    try {
-                        const parsed = JSON.parse(dataStr);
-                        callbacks.onDone(parsed.sources ?? []);
-                    } catch (e) {
-                        // if parsing fails, just notify error
-                        callbacks.onError?.(
-                            e instanceof Error ? e : new Error(String(e)),
-                        );
-                    }
+                    handleDoneEvent(dataStr, callbacks);
                 } else {
-                    // token message
-                    try {
-                        const tokenOrObj = JSON.parse(dataStr);
-                        // if server sends JSON string tokens or objects containing text
-                        if (typeof tokenOrObj === "string")
-                            callbacks.onToken(tokenOrObj);
-                        else if (
-                            typeof tokenOrObj === "object" &&
-                            tokenOrObj !== null &&
-                            "text" in tokenOrObj
-                        )
-                            // biome-ignore lint/suspicious/noExplicitAny: <TODO refactor>
-                            callbacks.onToken(String((tokenOrObj as any).text));
-                        else callbacks.onToken(String(tokenOrObj));
-                    } catch {
-                        // raw text chunk
-                        callbacks.onToken(dataStr);
-                    }
+                    handleDataEvent(dataStr, callbacks);
                 }
             }
         }
@@ -123,5 +89,54 @@ export async function streamCompletion(
             err instanceof Error ? err : new Error(String(err)),
         );
         throw err;
+    }
+}
+
+const parseMessage = (rawText: string): { event: string; dataStr: string } => {
+    const lines = rawText.split(/\r?\n/);
+    let event = "message";
+    const dataLines: string[] = [];
+    for (const line of lines) {
+        if (line.startsWith("event:")) {
+            event = line.slice(6).trim();
+        } else if (line.startsWith("data:")) {
+            dataLines.push(line.slice(5).trim());
+        }
+    }
+    const dataStr = dataLines.join("\n");
+    return {event, dataStr};
+}
+
+const handleDoneEvent = (dataStr: string, callbacks: Callbacks) => {
+    try {
+        const parsed = JSON.parse(dataStr);
+        callbacks.onDone(parsed.sources ?? []);
+    } catch (e) {
+        // if parsing fails, just notify error
+        callbacks.onError?.(
+            e instanceof Error ? e : new Error(String(e)),
+        );
+    }
+}
+
+const handleDataEvent = (dataStr: string, callbacks: Callbacks) => {
+    try {
+        const tokenOrObj = JSON.parse(dataStr);
+        // if server sends JSON string tokens or objects containing text
+        if (typeof tokenOrObj === "string")
+            callbacks.onToken(tokenOrObj);
+        else if (
+            typeof tokenOrObj === "object" &&
+            tokenOrObj !== null &&
+            "text" in tokenOrObj
+        ) {
+            // biome-ignore lint/suspicious/noExplicitAny: <TODO refactor>
+            callbacks.onToken(String((tokenOrObj as any).text));
+        } else {
+            callbacks.onToken(String(tokenOrObj));
+        }
+    } catch {
+        // raw text chunk
+        callbacks.onToken(dataStr);
     }
 }
