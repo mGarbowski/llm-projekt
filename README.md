@@ -2,7 +2,7 @@
 
 Mikołaj Garbowski
 
-![Zrzut ekranu z aplikacji](docs/screenshot.png)
+![Interfejs użytkownika](docs/ui.gif)
 
 ## Opis
 
@@ -139,6 +139,3 @@ zamiast odpowiedzi zwróć tekst: Nie udało mi się odnaleźć odpowiedzi na py
 * https://www.evidentlyai.com/ranking-metrics/precision-recall-at-k
 * https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr
 * [Konfiguracja PostgreSQL dla języka polskiego](https://github.com/judehunter/polish-tsearch)
-
-## TODO
-* Dopracować prompt generatora
