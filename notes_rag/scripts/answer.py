@@ -2,8 +2,8 @@
 
 from argparse import ArgumentParser
 
-from notes_rag.core.generation import Generator, GenerationRequest
-from notes_rag.core.pipeline import Pipeline
+from notes_rag.core.generation import Generator
+from notes_rag.core.pipeline import Pipeline, PipelineRequest
 from notes_rag.core.retrieval import FulltextRetriever, SemanticRetriever, Reranker
 from notes_rag.core.schema import (
     get_engine,
@@ -41,7 +41,7 @@ def main():
             answer_parts.append(chunk)
 
         print("Odpowiedź:")
-        _, context = pipeline.answer_stream(question, on_token=on_token)
+        _, context = pipeline.answer_stream(PipelineRequest(question), on_token=on_token)
         print("\nKontekst:")
         for i, chunk in enumerate(context):
             print(f"[{i + 1}] {chunk.title}, {chunk.course} ...")
