@@ -13,38 +13,41 @@ ewaluacja skuteczności opracowanego rozwiązania na samodzielnie przygotowanym 
 Za zbiór dokumentów posłużą moje notatki z wykładów na Politechnice Warszawskiej w formacie markdown,
 sporządzone w toku studiów inżynierskich.
 
+## Koncepcja rozwiązania
+
+* Dokumenty zostaną podzielone na fragmenty (chunks)
+    * długość tak dobrana, żeby zmieścić się w oknie kontekstowym modeli
+* Fragmenty z zanurzeniami i metadanymi będą zapisane w bazie danych
+* Aplikacja backend
+    * FastAPI + SentenceTransformers + transformers
+    * wyszukiwanie (retrieval)
+        * leksykalne: wyszukiwanie pełnotekstowe w PostgreSQL
+        * semantyczne: bi-enkoder do wyznaczania wektorów zanurzeń
+    * reranking
+        * wyniki wyszukiwania z obu wariantów są łączone
+        * cross-enkoder ocenia istotność każdego z fragmentów względem pytania
+        * wynikiem jest lista fragmentów posortowana wg. istotności
+    * generacja odpowiedzi
+        * na wejście LLM trafia pytanie wraz z kontekstem złożonym z najbardziej istotnych fragmentów
+* Aplikacja frontend
+    * prosta aplikacja w React z okienkiem czatu w stylu popularnych serwisów
+* Baza danych
+    * PostgreSQL
+    * rozszerzenie pgvector do przechowywania i indeksowania wektorów zanurzeń
+    * wbudowana funkcjonalność wyszukiwania pełnotekstowego
+    * rozszerzony o konfigurację dla języka polskiego (zobacz sekcję Źródła)
+
 ## Modele i algorytmy
 
-System ma charakter edukacyjny i będzie uruchamiany na moim PC wyposażonym w GPU NVIDIA GTX 1060 6GB.
-Wybierając modele, biorę pod uwagę te ograniczenia sprzętowe.
-
-Duży model językowy (generator) będzie uruchomiony na GPU, natomiast pozostałe modele (retriever, reranker) będą
-uruchomione na CPU.
+Projekt ma charakter edukacyjny i będzie uruchamiany własnej maszynie wyposażonej w GPU NVIDIA GTX 1060 6GB.
+Wybierając modele, kieruję się tymi ograniczeniami sprzętowymi.
 
 * Generator - `speakleash/Bielik-1.5B-v3.0-Instruct`
 * Retriever
     * PostgreSQL full-text search (wariant leksykalny)
-    * bi-enkoder `sdadas/mmlw-retrieval-roberta-large` (przetestowany na laboratorium)
+    * bi-enkoder `sdadas/mmlw-retrieval-roberta-large`
 * Reranker
-    * przetestowany na laboratorium
     * cross-enkoder `sdadas/polish-reranker-roberta-v3`
-
-Do weryfikacji pozostaje wydajność modeli uruchomionych na CPU
-
-## Koncepcja implementacji
-
-* Dokumenty zostaną podzielone na fargmenty (chunki)
-    * chunk ma się mieścić w kontekście modeli (przede wszystkim retrievera i rerankera)
-* Chunki z zanurzeniami i metadanymi będą zapisane w pazie PostgreSQL z rozszerzeniem pgvector
-* Aplikacja backend FastAPI + SentenceTransformers + transformers
-    * retrieval
-        * 2 warianty
-        * leksykalny - full-text search w PostgreSQL
-        * semantyczny - bi-enkoder do wyznaczania wektorów zanurzeń, indeks w pgvector
-    * reranking - cross-enkoder na wynikach retrieval
-    * generacja odpowiedzi - LLM na podstawie promptu z pytaniem i najistotniejszymi chunkami wg. rerankera
-    * endpoint REST API
-* Aplikacja frontend - prosta aplikacja w React z okienkiem czatu
 
 ## Zbiór testowy
 
@@ -83,7 +86,7 @@ Porównywane są trzy warianty:
 * leksykalne + semantyczny + reranker
 
 Porównywane są miary jakości Recall@k (niezależne od kolejności dokumentów w wyniku)
-oraz MRR@k (uwzględniające kolejność, im wyżej w rankingu jest pierwszy istotny dokument tym lepiej).
+oraz MRR@k (uwzględniające kolejność, im wyżej w rankingu jest pierwszy istotny dokument, tym lepiej).
 
 |           | Fulltext Retriever ('simple') | Fulltext Retriever ('polish') | Semantic Retriever | Reranking Retriever |
 |:----------|------------------------------:|------------------------------:|-------------------:|--------------------:|
@@ -96,16 +99,15 @@ oraz MRR@k (uwzględniające kolejność, im wyżej w rankingu jest pierwszy ist
 | MRR@5     |                          0.36 |                          0.32 |               0.70 |                0.86 |
 | MRR@10    |                          0.37 |                          0.33 |               0.70 |                0.86 |
 
-Zaskakujące jest, że wariant wyszukiwania leksykalnego z użyciem konfiguracji 'polish'
-(wsparcie dla stemmingu, usuwania *stop words* itp.) wypada gorzej niż generyczny wariant 'simple'.
+Zaskakujące jest, że wariant wyszukiwania leksykalnego z użyciem konfiguracji `polish`
+(wsparcie dla stemmingu, usuwania *stop words* itp.) wypada gorzej niż generyczny wariant `simple`.
 Cały zbiór dokumentów jest w języku polskim, więc spodziewałem się znacznie lepszych wyników.
-
 
 ### Generacja odpowiedzi
 
 Metryki są wyliczane na podstawie `referenceAnswers` w zbiorze testowym i odpowiedzi wygenerowanych przez pełny potok
 RAG
-(z użyciem wariantu wyszukiwania leksykalnego + semantycznego + rerankingu).
+(z użyciem wariantu wyszukiwania leksykalnego + semantycznego + reranking).
 
 |                        | Prompt 1 | Prompt 2 |
 |:-----------------------|---------:|---------:|
@@ -118,11 +120,13 @@ RAG
 | BLEU Score             |     3.74 |     1.71 |
 
 Prompt 1:
+
 ```
 Jesteś pomocnym asystentem, odpowiadaj krótko po polsku na podstawie kontekstu. Cytuj źródła w nawiasach kwadratowych [...].
 ```
 
 Prompt 2 (z laboratorium):
+
 ```
 Odpowiedz na pytanie użytkownika wykorzystując tylko informacje znajdujące się w dokumentach, a nie wcześniejszą wiedzę 
 Udziel wysokiej jakości, poprawnej gramatycznie odpowiedzi w języku polskim. 
