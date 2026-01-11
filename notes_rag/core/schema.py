@@ -35,7 +35,7 @@ class NoteChunk(Base):
 
 
 class NoteChunkRepository:
-    def __init__(self, session: Session, text_search_config: str = "simple"):
+    def __init__(self, session: Session, text_search_config: str = "polish"):
         self.session = session
         self.text_search_config = text_search_config
 
@@ -84,7 +84,7 @@ class NoteChunkRepository:
 def create_fulltext_index(engine: Engine):
     sql = (
         "CREATE INDEX IF NOT EXISTS content_idx "
-        "ON note_chunks USING GIN (to_tsvector('simple', content));"
+        "ON note_chunks USING GIN (to_tsvector('polish', content));"
     )
     with engine.begin() as conn:
         conn.execute(text(sql))
