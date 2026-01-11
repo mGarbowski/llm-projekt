@@ -1,8 +1,8 @@
 import { Box, Paper, Typography } from "@mui/material";
 import type React from "react";
-import type { Role, Source } from "./api";
-import { MarkdownText } from "./components/MarkdownText.tsx";
-import { Sources } from "./components/Sources.tsx";
+import type { Role, Source } from "../api.ts";
+import { MarkdownText } from "./MarkdownText.tsx";
+import { Sources } from "./Sources.tsx";
 
 type Props = {
     chatRole: Role;
@@ -23,7 +23,7 @@ export const MessageBubble: React.FC<Props> = ({
                 color="text.secondary"
                 sx={{ mb: 0.5 }}
             >
-                {chatRole === "user" ? "You" : "Assistant"}
+                {chatRole === "user" ? "Ty" : "Asystent"}
             </Typography>
             <Paper elevation={1} sx={{ p: 1.5, background: bg }}>
                 <MarkdownText text={content} />

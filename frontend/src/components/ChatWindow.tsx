@@ -1,8 +1,8 @@
 import { Box, Divider, Typography } from "@mui/material";
 import type React from "react";
 import { useEffect, useRef } from "react";
-import type { ChatMessage } from "./api";
-import { MessageBubble } from "./MessageBubble";
+import type { ChatMessage } from "../api.ts";
+import { MessageBubble } from "./MessageBubble.tsx";
 
 type Props = {
     history: ChatMessage[];
@@ -44,7 +44,7 @@ export const ChatWindow: React.FC<Props> = ({
         >
             {history.length === 0 && (
                 <Typography color="text.secondary">
-                    Ask a question to start the conversation.
+                    Zadaj pytanie aby rozpocząć rozmowę.
                 </Typography>
             )}
             {history.map((m, i) => (
@@ -66,12 +66,12 @@ export const ChatWindow: React.FC<Props> = ({
             )}
 
             {loading && (
-                <Typography color="text.secondary">Generating…</Typography>
+                <Typography color="text.secondary">Generowanie odpowiedzi...</Typography>
             )}
             {error && (
                 <>
                     <Divider sx={{ my: 1 }} />
-                    <Typography color="error">Error: {error}</Typography>
+                    <Typography color="error">Błąd: {error}</Typography>
                 </>
             )}
         </Box>

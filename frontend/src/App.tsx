@@ -1,10 +1,10 @@
 import { Container, Typography } from "@mui/material";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ChatMessage, Source } from "./api";
+import {API_BASE, type ChatMessage, type Source} from "./api";
 import { streamCompletion } from "./api";
-import { ChatWindow } from "./ChatWindow";
-import { InputBar } from "./InputBar";
+import { ChatWindow } from "./components/ChatWindow.tsx";
+import { InputBar } from "./components/InputBar.tsx";
 
 export const App: React.FC = () => {
     const [history, setHistory] = useState<ChatMessage[]>([]);
@@ -12,6 +12,7 @@ export const App: React.FC = () => {
         content: string;
         sources?: Source[];
     } | null>(null);
+    const currentRef = useRef<{ content: string; sources?: Source[] } | null>(null); // new
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,9 +28,10 @@ export const App: React.FC = () => {
     const sendQuestion = useCallback(async (question: string) => {
         setError(null);
         setLoading(true);
-        // append user message to history
         setHistory((s) => [...s, { role: "user", content: question }]);
-        setCurrent({ content: "", sources: [] });
+        const initialCurrent = { content: "", sources: [] as Source[] };
+        setCurrent(initialCurrent);
+        currentRef.current = initialCurrent;
 
         const controller = new AbortController();
         abortRef.current = controller;
@@ -40,33 +42,29 @@ export const App: React.FC = () => {
                 {
                     onToken: (token) => {
                         setCurrent((prev) => {
-                            if (!prev) return { content: token, sources: [] };
-                            return { ...prev, content: prev.content + token };
+                            const next = prev ? { ...prev, content: prev.content + token } : { content: token, sources: [] };
+                            currentRef.current = next;
+                            return next;
                         });
                     },
                     onDone: (sources) => {
-                        setCurrent((prev) => {
-                            const final = {
-                                content: prev?.content ?? "",
+                        const content = currentRef.current?.content ?? "";
+                        setHistory(h => [
+                            ...h,
+                            {
+                                role: "assistant",
+                                content,
                                 sources,
-                            };
-                            // push finished assistant message into history
-                            setHistory((h) => [
-                                ...h,
-                                {
-                                    role: "assistant",
-                                    content: final.content,
-                                    sources: final.sources,
-                                },
-                            ]);
-                            return null;
-                        });
+                            },
+                        ]);
+                        setCurrent(null);
                         setLoading(false);
                     },
                     onError: (err) => {
                         setError(err.message);
                         setLoading(false);
                         setCurrent(null);
+                        currentRef.current = null;
                     },
                 },
                 controller.signal,
@@ -101,7 +99,7 @@ export const App: React.FC = () => {
     return (
         <Container maxWidth="md" sx={{ pt: 3, pb: 3 }}>
             <Typography variant="h5" sx={{ mb: 2 }}>
-                RAG Chat (streaming)
+                notes.mgarbowski.pl - RAG
             </Typography>
 
             <ChatWindow
@@ -121,7 +119,7 @@ export const App: React.FC = () => {
             />
 
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
-                Using API: http://localhost:8000
+                API: {API_BASE}
             </Typography>
         </Container>
     );
