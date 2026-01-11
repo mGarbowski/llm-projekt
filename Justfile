@@ -32,11 +32,11 @@ eval-pipeline *ARGS:
 
 # Delete database container and volumes
 drop_db:
-    docker compose down -v
+    cd database && docker compose down -v
 
 # Start database container
 create_db:
-    docker compose up -d
+    cd database && docker compose up -d
 
 # Developer tools
 

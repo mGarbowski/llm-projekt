@@ -1,0 +1,3 @@
+[submodule "database/polish-tsearch"]
+	path = database/polish-tsearch
+	url = git@github.com:judehunter/polish-tsearch.git

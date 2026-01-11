@@ -85,16 +85,21 @@ Porównywane są trzy warianty:
 Porównywane są miary jakości Recall@k (niezależne od kolejności dokumentów w wyniku)
 oraz MRR@k (uwzględniające kolejność, im wyżej w rankingu jest pierwszy istotny dokument tym lepiej).
 
-|           | Fulltext Retriever | Semantic Retriever | Reranking Retriever |
-|:----------|-------------------:|-------------------:|--------------------:|
-| Recall@1  |               0.19 |               0.33 |                0.50 |
-| Recall@3  |               0.30 |               0.59 |                0.67 |
-| Recall@5  |               0.33 |               0.66 |                0.71 |
-| Recall@10 |               0.35 |               0.71 |                0.73 |
-| MRR@1     |               0.29 |               0.55 |                0.79 |
-| MRR@3     |               0.35 |               0.69 |                0.86 |
-| MRR@5     |               0.36 |               0.70 |                0.86 |
-| MRR@10    |               0.37 |               0.70 |                0.86 |
+|           | Fulltext Retriever ('simple') | Fulltext Retriever ('polish') | Semantic Retriever | Reranking Retriever |
+|:----------|------------------------------:|------------------------------:|-------------------:|--------------------:|
+| Recall@1  |                          0.19 |                          0.13 |               0.33 |                0.50 |
+| Recall@3  |                          0.30 |                          0.21 |               0.59 |                0.67 |
+| Recall@5  |                          0.33 |                          0.32 |               0.66 |                0.71 |
+| Recall@10 |                          0.35 |                          0.39 |               0.71 |                0.73 |
+| MRR@1     |                          0.29 |                          0.24 |               0.55 |                0.79 |
+| MRR@3     |                          0.35 |                          0.28 |               0.69 |                0.86 |
+| MRR@5     |                          0.36 |                          0.32 |               0.70 |                0.86 |
+| MRR@10    |                          0.37 |                          0.33 |               0.70 |                0.86 |
+
+Zaskakujące jest, że wariant wyszukiwania leksykalnego z użyciem konfiguracji 'polish'
+(wsparcie dla stemmingu, usuwania *stop words* itp.) wypada gorzej niż generyczny wariant 'simple'.
+Cały zbiór dokumentów jest w języku polskim, więc spodziewałem się znacznie lepszych wyników.
+
 
 ### Generacja odpowiedzi
 
@@ -118,9 +123,7 @@ RAG
 * https://medium.com/@nitinprodduturi/using-postgresql-as-a-vector-database-for-rag-retrieval-augmented-generation-c62cfebd9560
 * https://www.evidentlyai.com/ranking-metrics/precision-recall-at-k
 * https://www.evidentlyai.com/ranking-metrics/mean-reciprocal-rank-mrr
+* [Konfiguracja PostgreSQL dla języka polskiego](https://github.com/judehunter/polish-tsearch)
 
 ## TODO
-
-* Konfiguracja modułów dla języka polskiego w PostgreSQL
-    * na razie jest używany wariant `simple` - daleki od ideału dla tego zastosowania
 * Dopracować prompt generatora
