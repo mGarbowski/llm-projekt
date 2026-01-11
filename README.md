@@ -107,15 +107,30 @@ Metryki są wyliczane na podstawie `referenceAnswers` w zbiorze testowym i odpow
 RAG
 (z użyciem wariantu wyszukiwania leksykalnego + semantycznego + rerankingu).
 
-|                        |  Wartość |
-|:-----------------------|---------:|
-| BERT Score - Precision | 0.647105 |
-| BERT Score - Recall    | 0.728052 |
-| BERT Score - F1        | 0.684386 |
-| ROUGE-L - Precision    | 0.126731 |
-| ROUGE-L - Recall       | 0.356810 |
-| ROUGE-L - F1           | 0.175511 |
-| BLEU Score             | 3.740200 |
+|                        | Prompt 1 | Prompt 2 |
+|:-----------------------|---------:|---------:|
+| BERT Score - Precision |     0.65 |     0.65 |
+| BERT Score - Recall    |     0.73 |     0.73 |
+| BERT Score - F1        |     0.68 |     0.69 |
+| ROUGE-L - Precision    |     0.13 |     0.12 |
+| ROUGE-L - Recall       |     0.36 |     0.34 |
+| ROUGE-L - F1           |     0.18 |     0.17 |
+| BLEU Score             |     3.74 |     1.71 |
+
+Prompt 1:
+```
+Jesteś pomocnym asystentem, odpowiadaj krótko po polsku na podstawie kontekstu. Cytuj źródła w nawiasach kwadratowych [...].
+```
+
+Prompt 2 (z laboratorium):
+```
+Odpowiedz na pytanie użytkownika wykorzystując tylko informacje znajdujące się w dokumentach, a nie wcześniejszą wiedzę 
+Udziel wysokiej jakości, poprawnej gramatycznie odpowiedzi w języku polskim. 
+Odpowiedź powinna zawierać cytowania do dokumentów, z których pochodzą informacje. 
+Zacytuj dokument za pomocą symbolu [nr_dokumentu] powołując się na fragment np. [0] dla fragmentu z dokumentu 0.
+Jeżeli w dokumentach nie ma informacji potrzebnych do odpowiedzi na pytanie, 
+zamiast odpowiedzi zwróć tekst: Nie udało mi się odnaleźć odpowiedzi na pytanie
+```
 
 ## Źródła
 
