@@ -3,6 +3,7 @@ from typing import Protocol
 import torch
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
+from notes_rag.core.config import SEMANTIC_RETRIEVER_QUERY_PREFIX
 from notes_rag.core.models import load_reranker_model, load_bi_encoder_model
 from notes_rag.core.schema import NoteChunk, NoteChunkRepository
 
@@ -24,7 +25,7 @@ class SemanticRetriever:
         self,
         notes_repository: NoteChunkRepository,
         model,
-        query_prefix: str = "Zapytanie: ",
+        query_prefix: str = SEMANTIC_RETRIEVER_QUERY_PREFIX,
     ):
         self.notes_repository = notes_repository
         self.model = model
@@ -32,7 +33,9 @@ class SemanticRetriever:
 
     @classmethod
     def default_model(
-        cls, notes_repository: NoteChunkRepository, query_prefix: str = "Zapytanie: "
+        cls,
+        notes_repository: NoteChunkRepository,
+        query_prefix: str = SEMANTIC_RETRIEVER_QUERY_PREFIX,
     ):
         model = load_bi_encoder_model()
         return cls(notes_repository, model, query_prefix)

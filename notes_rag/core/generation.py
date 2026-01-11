@@ -6,10 +6,9 @@ from dataclasses import dataclass, field, asdict
 
 from transformers import Pipeline, TextIteratorStreamer
 
+from notes_rag.core.config import DEFAULT_SYSTEM_PROMPT
 from notes_rag.core.models import load_generator_model
 from notes_rag.core.schema import NoteChunk
-
-DEFAULT_SYSTEM_PROMPT = "Jesteś pomocnym asystentem, odpowiadaj krótko po polsku na podstawie kontekstu. Cytuj źródła w nawiasach kwadratowych [...]."
 
 
 class Generator:

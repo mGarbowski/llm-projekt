@@ -17,6 +17,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import declarative_base, Session, sessionmaker, mapped_column
 from pgvector.sqlalchemy import Vector
 
+from notes_rag.core.config import POSTGRES_TEXT_SEARCH_CONFIG
+
 Base = declarative_base()
 
 
@@ -35,7 +37,9 @@ class NoteChunk(Base):
 
 
 class NoteChunkRepository:
-    def __init__(self, session: Session, text_search_config: str = "polish"):
+    def __init__(
+        self, session: Session, text_search_config: str = POSTGRES_TEXT_SEARCH_CONFIG
+    ):
         self.session = session
         self.text_search_config = text_search_config
 
@@ -83,8 +87,8 @@ class NoteChunkRepository:
 
 def create_fulltext_index(engine: Engine):
     sql = (
-        "CREATE INDEX IF NOT EXISTS content_idx "
-        "ON note_chunks USING GIN (to_tsvector('polish', content));"
+        f"CREATE INDEX IF NOT EXISTS content_idx "
+        f"ON note_chunks USING GIN (to_tsvector('{POSTGRES_TEXT_SEARCH_CONFIG}', content));"
     )
     with engine.begin() as conn:
         conn.execute(text(sql))

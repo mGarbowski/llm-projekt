@@ -41,7 +41,9 @@ def main():
             answer_parts.append(chunk)
 
         print("Odpowiedź:")
-        _, context = pipeline.answer_stream(PipelineRequest(question), on_token=on_token)
+        _, context = pipeline.answer_stream(
+            PipelineRequest(question), on_token=on_token
+        )
         print("\nKontekst:")
         for i, chunk in enumerate(context):
             print(f"[{i + 1}] {chunk.title}, {chunk.course} ...")

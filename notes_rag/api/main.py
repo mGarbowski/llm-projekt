@@ -10,7 +10,8 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from notes_rag.core.generation import Generator, DEFAULT_SYSTEM_PROMPT, Message
+from notes_rag.core.generation import Generator, Message
+from notes_rag.core.config import DEFAULT_SYSTEM_PROMPT
 from notes_rag.core.models import (
     load_bi_encoder_model,
     load_reranker_model,
