@@ -136,8 +136,77 @@ Jeżeli w dokumentach nie ma informacji potrzebnych do odpowiedzi na pytanie,
 zamiast odpowiedzi zwróć tekst: Nie udało mi się odnaleźć odpowiedzi na pytanie
 ```
 
+## Instrukcja uruchomienia
+
+Wymagana jest instalacja:
+
+* Docker
+* Docker Compose
+* uv
+* just
+* Node.js i npm
+
+Wszystkie polecenia są uruchamiane za pomocą `just`. Lista dostępnych poleceń można wyświetlić poleceniem `just -l`.
+
+### Instalacja zależności
+
+```bash
+just install
+```
+
+### Tekstowy interfejs użytkownika
+
+![Interfejs tekstowy](docs/cli.gif)
+
+```bash
+just answer "Twoje pytanie"
+```
+
+### Przygotowanie bazy danych
+
+Surowy zbiór danych (notatki w formacie markdown) znajduje się w repozytorium (`data/raw`).
+
+```bash
+just chunk      # Podział dokumentów na fragmenty
+just index      # Wyznaczenie zanurzeń dla wszystkich fragmentów
+just create_db  # Uruchomienie bazy danych w kontenerze Docker
+just seed       # Załadowanie fragmentów z wyliczonymi zanurzeniami do bazy danych
+```
+
+### Uruchomienie aplikacji
+
+Wymaga uruchomionej bazy danych
+
+```bash
+just devb       # backend
+just devf       # frontend
+```
+
+### Ewaluacja
+
+```bash
+just eval-retriever  # Ewaluacja komponentu wyszukiwania
+just eval-pipeline   # Ewaluacja jakości generowanych odpowiedzi
+```
+
+## Struktura projektu
+```
+.
+├── data         # dane surowe i przetworzone
+├── database     # konfiguracja bazy danych
+├── frontend     # aplikacja frontend
+├── notebooks    # notatniki Jupyter
+└── notes_rag    # system RAG
+  ├── api        # aplikacja (REST API)
+  ├── core       # logika systemu RAG
+  ├── eval       # narzędzia do ewaluacji
+  └── scripts    # skrypty pomocnicze
+```
+
+
 ## Źródła
 
+* Wykłady z przedmiotu Podstawy Wielkich Modeli Językowych na wydziale EiTI PW
 * https://medium.com/@jesvinkjustin/from-zero-to-rag-the-art-of-document-chunking-and-embedding-for-rag-d9764695cc46
 * https://medium.com/@nitinprodduturi/using-postgresql-as-a-vector-database-for-rag-retrieval-augmented-generation-c62cfebd9560
 * https://www.evidentlyai.com/ranking-metrics/precision-recall-at-k

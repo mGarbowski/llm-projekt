@@ -47,6 +47,7 @@ fmt:
 # Install dependencies
 install:
     uv sync
+    cd frontend && npm ci
 
 # Setup Hugging Face credentials (required for downloading gated models)
 setup-hf:
