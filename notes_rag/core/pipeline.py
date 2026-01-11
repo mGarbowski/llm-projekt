@@ -7,7 +7,7 @@ import torch
 
 from notes_rag.core.generation import Generator, GenerationRequest, Message
 from notes_rag.core.retrieval import Retriever, Reranker
-from notes_rag.core.schema import NoteChunk
+from notes_rag.core.db.model import NoteChunk
 
 
 class Pipeline:

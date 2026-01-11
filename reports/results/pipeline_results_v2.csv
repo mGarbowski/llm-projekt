@@ -1,0 +1,8 @@
+,Pipeline
+BERT Score - Precision,0.65
+BERT Score - Recall,0.73
+BERT Score - F1,0.69
+ROUGE-L - Precision,0.12
+ROUGE-L - Recall,0.34
+ROUGE-L - F1,0.17
+BLEU Score,1.71

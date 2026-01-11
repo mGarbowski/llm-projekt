@@ -9,13 +9,11 @@ from notes_rag.core.retrieval import (
     Retriever,
     Reranker,
 )
-from notes_rag.core.schema import (
-    get_engine,
-    DbConfig,
-    create_session_factory,
+from notes_rag.core.notes_repository import (
     NoteChunkRepository,
-    NoteChunk,
 )
+from notes_rag.core.db.connection import DbConfig, get_engine, create_session_factory
+from notes_rag.core.db.model import NoteChunk
 from notes_rag.eval.dataset import TestDataset
 from notes_rag.eval.retrieval import RetrievalEvaluation, RetrievalEvaluationResult
 
