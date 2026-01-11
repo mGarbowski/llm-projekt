@@ -1,6 +1,7 @@
-import { Box, List, ListItem, Typography } from "@mui/material";
+import {Box, Link, List, ListItem, Typography} from "@mui/material";
 import type { Source } from "../api.ts";
 import { MarkdownText } from "./MarkdownText.tsx";
+import LaunchIcon from '@mui/icons-material/Launch';
 
 type Props = {
     sources: Source[];
@@ -35,8 +36,9 @@ const SourceItem = ({ source, idx }: ItemProps) => {
             : source.content;
     return (
         <Box>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            <Typography variant="h5">
                 [{idx + 1}] {source.title ?? source.id ?? "source"}
+                <Link target="_blank" href={buildSourceLink(source)}><LaunchIcon/></Link>
             </Typography>
             <Typography variant="body2" color="text.secondary">
                 <MarkdownText text={content} />
@@ -44,3 +46,8 @@ const SourceItem = ({ source, idx }: ItemProps) => {
         </Box>
     );
 };
+
+const buildSourceLink = (source: Source) => {
+    const notesBaseUrl = "https://mgarbowski.github.io/notes.mgarbowski.pl"
+    return `${notesBaseUrl}/${source.course}/${source.filename}`
+}
