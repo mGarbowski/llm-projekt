@@ -39,7 +39,7 @@ sporządzone w toku studiów inżynierskich.
 
 ## Modele i algorytmy
 
-Projekt ma charakter edukacyjny i będzie uruchamiany własnej maszynie wyposażonej w GPU NVIDIA GTX 1060 6GB.
+Projekt ma charakter edukacyjny i będzie uruchamiany na własnej maszynie wyposażonej w GPU NVIDIA GTX 1060 6GB.
 Wybierając modele, kieruję się tymi ograniczeniami sprzętowymi.
 
 * Generator - `speakleash/Bielik-1.5B-v3.0-Instruct`
