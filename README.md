@@ -136,6 +136,134 @@ Jeżeli w dokumentach nie ma informacji potrzebnych do odpowiedzi na pytanie,
 zamiast odpowiedzi zwróć tekst: Nie udało mi się odnaleźć odpowiedzi na pytanie
 ```
 
+### Przykładowe odpowiedzi
+
+Poniżej kilka przykładów ze zbioru testowego.
+Pytanie, odpowiedź wygenerowana przez system RAG oraz wzorcowa odpowiedź.
+
+#### Co to jest semafor?
+
+##### Odpowiedź systemu
+
+```
+Semafor to narzędzie systemowe w systemach operacyjnych, które jest używane do zarządzania dostępem do wspólnych zasobów
+przez wiele procesów. Semafory pozwalają na synchronizację procesów, umożliwiając im współdzielenie zasobów bez
+konfliktów.
+
+Semafory są inicjowane przez system operacyjny z określoną wartością, która określa maksymalną liczbę procesów, które
+mogą jednocześnie korzystać z zasobu. Kiedy proces chce uzyskać dostęp do zasobu, inicjuje działanie semafora (operacja
+`P`). Proces musi wówczas czekać (blokuje się) na zwolnienie zasobu przez innego proces (operacja `V`). Po zwolnieniu
+zasobu, proces, który go zablokował, może kontynuować działanie.
+
+Semafory mogą być nazwane i udostępniane innym procesom przez ich nazwy. Można je tworzyć, niszczyć, blokować, uwalniać,
+otwierać, zamykać i usuwać. Dostępne są różne operacje na semaforach, takie jak `sem_init`, `sem_destroy`, `sem_wait`,
+`sem_post`, `sem_open`, `sem_close`, `sem_unlink`.
+
+Semafory mogą być również używane
+```
+
+##### Wzorcowa odpowiedź
+
+```
+Semafor to zmienna nieujemna sterująca synchronizacją, z operacjami P (proberen) i V (verhogen). P zmniejsza semafor i
+może zablokować proces jeśli wartość ≤0, V zwiększa semafor i potencjalnie budzi oczekujące procesy.
+```
+
+#### Co to jest atak wstrzyknięcia (injection)?
+
+##### Odpowiedź systemu
+
+```
+Atak wstrzyknięcia, znany również jako **SQL Injection**, **XSS** (XML/XHTML Scripting), **XPATH Injection**, **JSON
+Injection**, **HTTP Response Splitting**, **ORM Injection**, **Cmd Injection**, **LDAP Injection**, **Blind SQL
+Injection**, **Timing Attack** i **Remote Code Execution**, polega na wstrzyknięciu złośliwego kodu do aplikacji webowej
+lub bazy danych, aby uzyskać nieuprawniony dostęp do zasobów lub wykonać ataki na system.
+```
+
+##### Wzorcowa odpowiedź
+
+```
+Wstrzyknięcie polega na tym, że dane wejściowe wyłamują się z kontekstu i są interpretowane jako kod wykonywany przez
+aplikację (np. SQL injection, command injection). Powoduje nieautoryzowane wykonanie poleceń i wyciek danych.
+```
+
+#### Jak optymalizator decyduje między dostępem sekwencyjnym a korzystaniem z indeksu?
+
+##### Odpowiedź systemu
+
+```
+Optymalizator decyduje między dostępem sekwencyjnym a korzystaniem z indeksu na podstawie kilku czynników, takich jak:
+
+- **Szerokość bloku**: Im szerszy blok, tym mniej często potrzebny jest dostęp sekwencyjny.
+- **Liczba wierszy**: W małych tabelach dostęp sekwencyjny jest szybszy, ale w dużych tabelach lepiej korzystać z
+  indeksów.
+- **Złożoność zapytania**: Dla zapytań zwracających wiele wierszy (np. 10% wszystkich wierszy) lepszym wyborem jest
+  dostęp sekwencyjny.
+- **Warunki zapytania**: Jeśli zapytanie zawiera złożone warunki, lepiej wybrać bardziej selektywny indeks, aby szybko
+  przefiltrować wyniki.
+- **Rodzaj indeksu**: Indeksy złożone (nazisko, imie) są bardziej selektywne i mogą natychmiast dostarczyć odpowiedzi.
+  Indeksy mieszające (imie, nazwisko) są używane dla zapytań zwracających mało wierszy z dużych tabel. Indeksy bitmapowe
+  są optymalne dla zapytań z wieloma warunkami i dużymi tabelami.
+- **Konfiguracja systemu**: Optymalizator może być skonfigurowany do preferowania określonego typu dostępu.
+```
+
+##### Wzorcowa odpowiedź
+
+```
+Wybór zależy od selektywności warunku i statystyk: mała liczba wierszy - użycie indeksu; duża liczba wierszy - przegląd
+sekwencyjny. Optymalizator korzysta ze statystyk tabel, kolumn i indeksów by oszacować koszty IO i CPU; dla złożonych
+przypadków może łączyć wyniki kilku indeksów."
+```
+
+#### Do czego służą Docker Volumes?
+
+##### Odpowiedź systemu
+
+```
+Docker Volumes służą do przechowywania danych dla kontenerów. Dzięki nim kontenery mogą mieć niezależne od siebie kopie
+plików, nawet jeśli są uruchamiane w ramach tego samego klastra. Volumes mogą być udostępniane do odczytu lub zapisu i
+są zarządzane przez Docker.
+```
+
+##### Wzorcowa odpowiedź
+
+```
+Docker Volumes służą do przechowywania danych trwałych poza cyklem życia kontenera. Pozwalają zachować dane po
+wyłączeniu kontenera.
+```
+
+#### Co to są Stack Canaries i jak działają?
+
+##### Odpowiedź systemu
+
+```
+Stack Canaries to techniki bezpieczeństwa stosowane w aplikacjach C/C++, mające na celu wykrycie przerwania wykonania
+przez złośliwy kod przed jego wykonaniem. Nazwa pochodzi od kanarków używanych w kopalniach do wczesnego wykrywania
+gazu, co w tym przypadku służy do wczesnego wykrywania przerwania wykonania programu.
+
+
+### Jak działają stack canaries?
+
+1. **Polegają na umieszczeniu losowo generowanej zmiennej na stosie przed adresem powrotu (adresem, do którego program
+   wraca po zakończeniu wykonywania).**
+2. **W przypadku przerwania wykonania przez złośliwy kod, zmienna ta zostanie zmieniona (np. przez wykonanie kodu
+   wstrzymującego wykonanie), co uniemożliwi programowi powrót do oryginalnego adresu.**
+3. **Zamiast tego, zmienna zostaje przekazana do narzędzia antymalware lub innej ochrony, które może ją zweryfikować i
+   podjąć odpowiednie działania, takie jak zatrzymanie procesu lub wysłanie alarmu.**
+
+### Dlaczego stack canaries są ważne?
+
+Stack canaries są szczególnie przydatne w przypadku ataków takich jak **return-oriented programming (ROP)**, które
+polegają na wykorzystaniu luki w bezpieczeństwie systemu
+```
+
+##### Wzorcowa odpowiedź
+
+```
+Stack Canaries to losowa wartość umieszczana na stosie przed adresem powrotu. Przed wykonaniem instrukcji `ret` sprawdza
+się, czy kanarek nie został zmieniony - jeśli tak, wykrywa się przepełnienie stosu i przerywa wykonywanie.
+```
+
 ## Instrukcja uruchomienia
 
 Wymagana jest instalacja:
@@ -190,6 +318,7 @@ just eval-pipeline   # Ewaluacja jakości generowanych odpowiedzi
 ```
 
 ## Struktura projektu
+
 ```
 .
 ├── data         # dane surowe i przetworzone
@@ -202,7 +331,6 @@ just eval-pipeline   # Ewaluacja jakości generowanych odpowiedzi
   ├── eval       # narzędzia do ewaluacji
   └── scripts    # skrypty pomocnicze
 ```
-
 
 ## Źródła
 
